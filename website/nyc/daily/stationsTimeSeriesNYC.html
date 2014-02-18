@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+        <title>Monday Station Time Series</title>
+        <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+        <style type="text/css">
+			html, body, #map {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            #controls {
+            	width: 100%;
+            	height: 60px;
+            }
+        
+        	.border {
+        	    stroke: black;
+	            stroke-width: 2px;
+	            fill: blue;
+	        }
+	        
+	        .lines {
+	        	stroke: magenta;
+	        }
+	        
+	        .label {
+	        	text-anchor: middle;
+            	font-size: 12px;
+            	font-weight: bold;
+            	fill: red;
+			}
+            
+            .stations div {
+                position: absolute;
+            }
+            
+            .stations svg {
+                position: absolute;
+                width: 40px;
+                height: 40px;
+            }
+            	        
+	        .stations circle {
+                fill: brown;
+                stroke: black;
+                stroke-width: 1.5px;
+            }
+            
+            .timeSlider {
+            	width: 90%;
+            }
+			
+        </style>
+    </head>
+    <body>
+    	<div id="controls" class="center">
+    		<!-- <input name="prevButton"
+    			type="button"
+    			value="<"
+    			onclick="prevTimeInterval()" />
+    		<input name="nextButton"
+    			type="button"
+    			value=">"
+    			onclick="nextTimeInterval()" /> -->
+    		<div id="timeField">
+    			0:00
+    		</div>
+    		<input name="timeSlider"
+    			type="range"
+    			min="0"
+    			max="143"
+    			class="timeSlider"
+    			onchange="changeTimeInterval(this.value)"/>
+    	</div>
+    	<div id="map">
+    	</div>
+        <script type="text/javascript">
+        
+            var map = new google.maps.Map(d3.select("#map").node(), {
+                zoom : 12,
+                center : new google.maps.LatLng(40.73, -73.99),
+                mapTypeId : google.maps.MapTypeId.TERRAIN
+            });
+            
+            var which = "votes" //or "docks"
+            var scale = "lin"
+            var overlay = new google.maps.OverlayView();
+            var padding = 20;
+            
+            var timeIndex = 0;
+            
+            d3.json("../../data_nyc/stationsNYC.json", function(stations) {
+	            d3.json("../../data_nyc/dayAverages/monAverages.json", function(capacities) {
+	            	var rScale = d3.scale.linear()
+	                .domain([
+	                    d3.min(Object.keys(capacities[timeIndex].stations), function(d) {
+	                        // return capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].count;
+	                        return capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].totalDocksTotal;
+	                    }),
+	                    d3.max(Object.keys(capacities[timeIndex].stations), function(d) {
+	                        // return capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].count;
+	                        return capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].totalDocksTotal;
+	                    })])
+	                .range([2,padding]);
+	            	
+	            	for (i in capacities) {
+	            		capacities[i].time = new Date(1970,0,1, capacities[i].hour, capacities[i].minute);
+					};
+            		lookup = {};
+            		for (j in stations) {
+            			lookup[stations[j].id] = {
+            				"lat": stations[j].lat,
+            				"lon": stations[j].lon
+            			};
+            		};
+            		
+            		overlay.updateTime = function() {
+            			var hours = capacities[timeIndex].time.getHours();
+            			var minutes = capacities[timeIndex].time.getMinutes();
+            			if (minutes < 10)
+            				minutes = "0" + minutes
+            			document.getElementById("timeField").innerHTML = hours+":"+minutes;
+            		}
+            		
+	            	overlay.onAdd = function() {
+	            		var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
+	            		
+	            		var projection = this.getProjection()
+	            		
+						function project(pt) {
+			        		var point = projection.fromLatLngToDivPixel(new google.maps.LatLng(pt[1], pt[0]));
+			        		return [point.x, point.y];
+			        	};
+	                    
+	                    function setStation(d) {
+	                    	if (lookup[d]) {
+	                    		var pt = [lookup[d].lon, lookup[d].lat];;
+								pt = project(pt);
+	                    		return d3.select(this).style("left", (pt[0] - padding) + "px").style("top", (pt[1] - padding) + "px");
+	                    	}
+	                    };
+						
+						allStations = Object.keys(capacities[timeIndex].stations);
+	                    // allStations = ["216"]
+	            		
+	                    var svgs = layer
+	                    	.selectAll("svg")
+	                    	.data(allStations)
+	                    	.enter()
+	                    	.append("svg:svg")
+	                    	.each(setStation);
+			        	
+			        	var circles = svgs
+			        		.append("svg:circle")
+			        		.attr("cx", padding)
+			        		.attr("cy", padding);
+						
+	                    overlay.draw = function() {
+	                    	console.log(capacities[timeIndex].time);
+	                    	svgs.each(setStation)
+	                    	
+	                    	circles.transition()
+	                    		.attr("r", function(d) {
+			        			// return rScale(capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].count)
+			        			return rScale(capacities[timeIndex].stations[d].availableBikesTotal/capacities[timeIndex].stations[d].totalDocksTotal)
+			        		})
+		            	};
+	            	};
+	            	
+	            	overlay.setMap(map);
+ 				});
+            });
+            
+        	function prevTimeInterval() {
+        		timeIndex -= 1;
+        		overlay.draw();
+        	}
+        	function nextTimeInterval() {
+        		timeIndex += 1;
+        		overlay.draw();
+        	}
+        	
+        	function changeTimeInterval(value) {
+        		// console.log(value);
+        		timeIndex = value;
+        		overlay.updateTime();
+        		overlay.draw();
+        	}
+        </script>
+    </body>
+</html>

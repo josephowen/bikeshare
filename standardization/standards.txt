@@ -1,0 +1,23 @@
+All:
+id = string
+lat = float
+lon = float
+name = string
+
+Stations:
+bikes = int
+docks = int
+totalDocks = int
+elev = float
+
+Suggestions:
+votes = int
+DC:
+comments = []
+	vote = int
+	text = string
+	user = string
+NYC:
+user_name = string
+user_zip = string
+reason = string

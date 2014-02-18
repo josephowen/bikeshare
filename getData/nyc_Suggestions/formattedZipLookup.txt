@@ -1,0 +1,43 @@
+{
+	u'status': u'OK',
+	u'results': [
+		{
+			u'geometry': {
+				u'location_type': u'APPROXIMATE',
+				u'bounds': {u'northeast': {u'lat': 39.132261, u'lng': -77.02277289999999}, u'southwest': {u'lat': 39.0397059, u'lng': -77.0995871}},
+				u'viewport': {u'northeast': {u'lat': 39.132261, u'lng': -77.02277289999999}, u'southwest': {u'lat': 39.0397059, u'lng': -77.0995871}},
+				u'location': {u'lat': 39.08168209999999, u'lng': -77.04493269999999}
+			}, 
+			u'address_components': [
+				{
+					u'long_name': u'20906',
+					u'types': [u'postal_code'],
+					u'short_name': u'20906'
+				}, 
+				{
+					u'long_name': u'Silver Spring',
+					u'types': [u'locality', u'political'],
+					u'short_name': u'Silver Spring'
+				},
+				{
+					u'long_name': u'Montgomery',
+					u'types': [u'administrative_area_level_2', u'political'],
+					u'short_name': u'Montgomery'
+				},
+				{
+					u'long_name': u'Maryland',
+					u'types': [u'administrative_area_level_1', u'political'],
+					u'short_name': u'MD'
+				},
+				{
+					u'long_name': u'United States',
+					u'types': [u'country', u'political'],
+					u'short_name': u'US'
+				}
+			],
+			u'partial_match': True, 
+			u'formatted_address': u'Silver Spring, MD 20906, USA',
+			u'types': [u'postal_code']
+		}
+	]
+}

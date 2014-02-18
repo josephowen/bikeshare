@@ -1,0 +1,14 @@
+Suggestion Database:
+
+http://a841-tfpweb.nyc.gov/bikeshare/get_suggestion_points
+
+http://a841-tfpweb.nyc.gov/bikeshare/get_station_info?point=1
+
+http://a841-tfpweb.nyc.gov/bikeshare/get_suggestion_info?point=1
+
+
+Actual Database:
+
+http://citibikenyc.com/stations/json/
+
+http://citibikenyc.com/assets/js/pages/planned-stations.json

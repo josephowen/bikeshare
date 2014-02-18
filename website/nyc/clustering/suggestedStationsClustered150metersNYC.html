@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+        <title>Citi Bike Suggestions Clustered within 150 meters</title>
+        <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+        <style type="text/css">
+            html, body, #map {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .stations, .stations svg {
+                position: absolute;
+            }
+            
+            .stations svg {
+                width: 60px;
+                height: 60px;
+                font: 10px sans-serif;
+            }
+
+            .stations circle {
+                fill: brown;
+                stroke: black;
+                stroke-width: 1.0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script type="text/javascript">
+            var map = new google.maps.Map(d3.select("#map").node(), {
+                zoom : 12,
+                center : new google.maps.LatLng(40.73, -73.99),
+                mapTypeId : google.maps.MapTypeId.TERRAIN
+            });
+        
+            d3.json("../../data_nyc/clustering/dendrogramGroups150meters.json", function(data) {
+                var rScale = d3.scale.linear()
+                    .domain([
+                        d3.min(data, function(d) {
+                            return parseInt(d["votes"]);
+                        }),
+                        d3.max(data, function(d) {
+                            return parseInt(d["votes"]);
+                        })])
+                    .range([2,15])
+                    
+                data.sort(function(a, b) {
+                	return b["votes"] - a["votes"] 
+                });
+                
+                var overlay = new google.maps.OverlayView();
+                
+                overlay.onAdd = function() {
+                    var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
+                    
+                    overlay.draw = function() {
+                        var projection = this.getProjection()
+                        var padding = 16;
+
+                        var marker = layer.selectAll("svg")
+                            .data(d3.entries(data))
+                            .each(transform)// update existing markers
+                            .enter()
+                            .append("svg:svg")
+                            .each(transform)
+                            .attr("class", "marker");
+
+                        // Add a circle.
+                        marker.append("svg:circle")
+                            .attr("r", function(d) {
+                                //***********SOMETIMES RETURNS "NaN"***************
+                                //if (rScale(parseInt(d.value["ck_rating_up"])) == NaN)
+                                //    console.log(d.value["ck_rating_up"]);
+                                var size = rScale(parseInt(d.value["votes"]));
+                                return size
+                            })
+                            .attr("cx", padding)
+                            .attr("cy", padding);
+
+                        function transform(d) {
+                            d = new google.maps.LatLng(d.value["lat"], d.value["lon"]);
+                            d = projection.fromLatLngToDivPixel(d);
+                            return d3.select(this).style("left", (d.x - padding) + "px").style("top", (d.y - padding) + "px");
+                        }
+                    };
+                };
+                
+                overlay.setMap(map);
+            });
+        </script>
+    </body>
+</html>
