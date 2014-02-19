@@ -31,7 +31,8 @@
         </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map">
+        </div>
         <script type="text/javascript">
             var map = new google.maps.Map(d3.select("#map").node(), {
                 zoom : 12,
@@ -48,10 +49,10 @@
                         d3.max(data, function(d) {
                             return parseInt(d["votes"]);
                         })])
-                    .range([2,15])
+                    .range([2,15]);
                     
                 data.sort(function(a, b) {
-                	return b["votes"] - a["votes"] 
+                	return b["votes"] - a["votes"];
                 });
                 
                 var overlay = new google.maps.OverlayView();
@@ -60,7 +61,7 @@
                     var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
                     
                     overlay.draw = function() {
-                        var projection = this.getProjection()
+                        var projection = this.getProjection();
                         var padding = 16;
 
                         var marker = layer.selectAll("svg")

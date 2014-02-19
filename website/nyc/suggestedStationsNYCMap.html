@@ -31,17 +31,18 @@
         </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map">
+        </div>
         <script type="text/javascript">
             var map = new google.maps.Map(d3.select("#map").node(), {
                 zoom : 12,
                 center : new google.maps.LatLng(40.73, -73.99),
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
-        
-            d3.json("../data_nyc/suggestionsNYC.json", function(data) {
+            
+            d3.json("../../data/nyc/suggestions.json", function(data) {
             	data.sort(function(a, b) {
-                	return b["votes"] - a["votes"] 
+                	return b["votes"] - a["votes"];
                 });
             	
                 var rScale = d3.scale.linear()
@@ -61,7 +62,7 @@
                     var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
                     
                     overlay.draw = function() {
-                        var projection = this.getProjection()
+                        var projection = this.getProjection();
                         var padding = 16;
 
                         var marker = layer.selectAll("svg")
@@ -80,8 +81,8 @@
                                 //    console.log(d.value["ck_rating_up"]);
                                 var size = rScale(parseInt(d.value["votes"]));
                                 if (size == "NaN")
-                                    console.log(size)
-                                return size
+                                    console.log(size);
+                                return size;
                             })
                             .attr("cx", padding)
                             .attr("cy", padding);

@@ -39,10 +39,11 @@
                 center : new google.maps.LatLng(40.73, -73.99),
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
-            d3.json("../data_nyc/stationsNYC.json", function(data) {
-            	console.log(data)
+            
+            d3.json("../../data/nyc/stations.json", function(data) {
+            	console.log(data);
             	data.sort(function(a, b) {
-                	return b["totalDocks"] - a["totalDocks"] 
+                	return b["totalDocks"] - a["totalDocks"];
                 });
             	
 	            var rScale = d3.scale.linear()
@@ -61,7 +62,7 @@
 	                var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
 	                
 	                overlay.draw = function() {
-	                    var projection = this.getProjection()
+	                    var projection = this.getProjection();
 	                    var padding = 16;
 	
 	                    var marker = layer.selectAll("svg")

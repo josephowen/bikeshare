@@ -31,7 +31,8 @@
         </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map">
+        </div>
         <script type="text/javascript">
             var map = new google.maps.Map(d3.select("#map").node(), {
                 zoom : 13,
@@ -41,7 +42,7 @@
         
             d3.json("../../data/dc/stations.json", function(data) {
             	data.sort(function(a, b) {
-                	return b["totalDocks"] - a["totalDocks"] 
+                	return b["totalDocks"] - a["totalDocks"];
                 });
             	
                 var rScale = d3.scale.linear()
@@ -60,7 +61,7 @@
                     var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
                     
                     overlay.draw = function() {
-                        var projection = this.getProjection()
+                        var projection = this.getProjection();
                         var padding = 16;
 
                         var marker = layer.selectAll("svg")

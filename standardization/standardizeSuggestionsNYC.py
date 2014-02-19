@@ -2,7 +2,7 @@ import json
 
 newStations = []
 
-with open("suggestedStationsNYC.json", "r") as f:
+with open("../data/nyc/raw/suggestions.json", "r") as f:
 	oldStations = json.load(f)
 	
 for station in oldStations:
@@ -54,5 +54,5 @@ for station in oldStations:
 	
 	newStations.append(newStation)
 	
-with open("suggestionsNYC.json", "w") as f:
+with open("../data/nyc/suggestions.json", "w") as f:
 	json.dump(newStations, f)
