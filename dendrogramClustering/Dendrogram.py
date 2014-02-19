@@ -135,13 +135,13 @@ def run(sourceFile, destinationFolder, maxDistance):
     print "After:", len(groups), "groups"
 
 if __name__ == "__main__":
-    # run("../data_nyc/suggestionsNYC.json", "../data_nyc/clusteredSuggestions", 0.050)
-    # run("../data_nyc/suggestionsNYC.json", "../data_nyc/clusteredSuggestions", 0.100)
-    # run("../data_nyc/suggestionsNYC.json", "../data_nyc/clusteredSuggestions", 0.150)
-    # run("../data_nyc/suggestionsNYC.json", "../data_nyc/clusteredSuggestions", 0.200)
+    # run("../data/nyc/suggestions.json", "../data/nyc/clustering", 0.050)
+    # run("../data/nyc/suggestions.json", "../data/nyc/clustering", 0.100)
+    # run("../data/nyc/suggestions.json", "../data/nyc/clustering", 0.150)
+    # run("../data/nyc/suggestions.json", "../data/nyc/clustering", 0.200)
 	
-    # run("../data_dc/suggestionsDC.json", "../data_dc/clusteredSuggestions", 0.050)
-    run("../data/dc/suggestions.json", "../data/dc/clusteredSuggestions", 0.100)
-    # run("../data_dc/suggestionsDC.json", "../data_dc/clusteredSuggestions", 0.150)
-    # run("../data_dc/suggestionsDC.json", "../data_dc/clusteredSuggestions", 0.200)
+    # run("../data/dc/suggestions.json", "../data_dc/clustering", 0.050)
+    run("../data/dc/suggestions.json", "../data/dc/clustering", 0.100)
+    # run("../data/dc/suggestions.json", "../data/dc/clustering", 0.150)
+    # run("../data/dc/suggestions.json", "../data_dc/clustering", 0.200)
 
