@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+regions = {}
+regions["type"] = "FeatureCollection"
+regions["features"] = []
 
 array = []
 
@@ -18,7 +21,7 @@ for station in stations:
 points = np.array(array)
 vor = Voronoi(points)
 
-print vor.vertices
+print vor.vertices[0]
 
 voronoi_plot_2d(vor)
 plt.show()
