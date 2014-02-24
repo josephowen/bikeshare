@@ -1,13 +1,13 @@
 import matplotlib.path as path
 import json
 
-with open("../data/dc/voronoi/voronoi.json", "r") as f:
+with open("../data/nyc/voronoi/voronoi.json", "r") as f:
     voronois = json.load(f)
 
-with open("../data/dc/suggestions.json", "r") as f:
+with open("../data/nyc/suggestions.json", "r") as f:
     suggestions = json.load(f)
 
-with open("../data/dc/stations.json", "r") as f:
+with open("../data/nyc/stations.json", "r") as f:
     stations = json.load(f)
     
 staPointArray = []
@@ -47,7 +47,7 @@ for i, feature in enumerate(voronois["features"]):
             docks += docksArray[j]
             
     if len(stationsInside) != 1:
-        print "ERROR:", len(stationsInside), "stations"
+        print "ERROR"
 
     if not stationsInside[0] in insideVoronois:
         thisZipcode = insideVoronois[stationsInside[0]] = {}
@@ -71,9 +71,9 @@ for i, feature in enumerate(voronois["features"]):
     
     print str(i+1) + "/" + str(totalLength) + ": ", len(stationsInside), "stations and", len(suggestionsInside), "suggestions, " + str(docks) + " totalDocks, " + str(votes) + " votes"
     
-with open("../data/dc/voronoi/voronoiContents.json", "w") as f:
+with open("../data/nyc/voronoi/voronoiContents.json", "w") as f:
     json.dump(insideVoronois, f)
     
     
-with open("../data/dc/voronoi/voronoiInfo.json", "w") as f:
+with open("../data/nyc/voronoi/voronoiInfo.json", "w") as f:
     json.dump(voronois, f)

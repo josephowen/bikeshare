@@ -3,17 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-regions = {}
-regions["type"] = "FeatureCollection"
-regions["features"] = []
+voronoiData = {}
+voronoiData["type"] = "FeatureCollection"
+voronoiData["features"] = []
 
 array = []
 
 with open("../data/nyc/stations.json", "r") as f:
 	stations = json.load(f)
-	
-#with open("../data/dc/stations.json", "r") as f:
-#	stations = json.load(f)
 
 for station in stations:
 	array.append([station["lon"], station["lat"]])
@@ -21,7 +18,24 @@ for station in stations:
 points = np.array(array)
 vor = Voronoi(points)
 
-print vor.vertices[0]
+#print len(vor.vertices)
 
-voronoi_plot_2d(vor)
-plt.show()
+#print vor.regions[100]
+
+for region in vor.regions:
+	if len(region) > 0:
+		feature = {"type":"Feature", "properties":{}, "geometry":{"type":"Polygon", "coordinates":[]}}
+		coordinates = []
+		for i in region:
+			coordinates.append([vor.vertices[i][0], vor.vertices[i][1]])
+			
+		coordinates.append([vor.vertices[region[0]][0], vor.vertices[region[0]][1]])
+			
+		feature["geometry"]["coordinates"].append(coordinates)
+		voronoiData["features"].append(feature)
+
+with open("../data/nyc/voronoi/voronoi.json", "w") as f:
+	json.dump(voronoiData, f)
+
+#voronoi_plot_2d(vor)
+#plt.show()

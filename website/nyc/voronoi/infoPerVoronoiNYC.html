@@ -69,9 +69,9 @@
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
             
-            var which = "votes" //or "docks"
+            var which = "votes"; //or "docks"
             document.getElementById("votesButton").disabled = true;
-            var scale = "lin"
+            var scale = "lin";
     		document.getElementById("linButton").disabled = true;
             
             var overlay = new google.maps.OverlayView();
@@ -81,43 +81,43 @@
 	        	var votesScale = d3.scale.linear()
                     .domain([
                         d3.min(geoJson.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         }),
                         d3.max(geoJson.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })])
-                    .range([0,1])
+                    .range([0,1]);
    	        	var docksScale = d3.scale.linear()
                     .domain([
                         d3.min(geoJson.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         }),
                         d3.max(geoJson.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })])
-                    .range([0,1])
+                    .range([0,1]);
                     
                 var votesLogScale = d3.scale.log()
                     .domain([
                         d3.min(geoJson.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })+1,
                         d3.max(geoJson.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })])
-                    .range([0,1])
+                    .range([0,1]);
    	        	var docksLogScale = d3.scale.log()
                     .domain([
                         d3.min(geoJson.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })+1,
                         d3.max(geoJson.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })])
-                    .range([0,1])
+                    .range([0,1]);
             	
             	overlay.onAdd = function() {
-            		var projection = this.getProjection()
+            		var projection = this.getProjection();
             		
                     var svg = d3.select(this.getPanes().overlayLayer).append("svg");
             		var g = svg.append("g");
@@ -196,7 +196,7 @@
 	            	
 	            	overlay.updateLabels = function() {
 	            		labels.each(setLabel);
-	            	}
+	            	};
 	            	
             	};
             	
@@ -222,4 +222,18 @@
         	
         	function updateToLin() {
         		scale = "lin";
-        		overlay.upd
+        		overlay.updateAlpha();
+        		
+        		document.getElementById("linButton").disabled = true;
+        		document.getElementById("logButton").disabled = false;
+        	}
+        	function updateToLog() {
+        		scale = "log";
+        		overlay.updateAlpha();
+        		
+        		document.getElementById("logButton").disabled = true;
+        		document.getElementById("linButton").disabled = false;
+        	}
+        </script>
+    </body>
+</html>
