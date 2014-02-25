@@ -34,8 +34,8 @@ for region in vor.regions:
 		feature["geometry"]["coordinates"].append(coordinates)
 		voronoiData["features"].append(feature)
 
-with open("../data/nyc/voronoi/voronoi.json", "w") as f:
-	json.dump(voronoiData, f)
+#with open("../data/nyc/voronoi/voronoi.json", "w") as f:
+#	json.dump(voronoiData, f)
 
-#voronoi_plot_2d(vor)
-#plt.show()
+voronoi_plot_2d(vor)
+plt.show()
