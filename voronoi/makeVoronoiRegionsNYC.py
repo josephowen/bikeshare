@@ -37,5 +37,11 @@ for region in vor.regions:
 #with open("../data/nyc/voronoi/voronoi.json", "w") as f:
 #	json.dump(voronoiData, f)
 
+print max(vor.vertices, key=lambda x: x[0])
+print min(vor.vertices, key=lambda x: x[0])
+
+print max(vor.vertices, key=lambda x: x[1])
+print min(vor.vertices, key=lambda x: x[1])
+
 voronoi_plot_2d(vor)
 plt.show()
