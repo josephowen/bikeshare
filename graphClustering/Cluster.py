@@ -196,5 +196,5 @@ def run(sourceFile, destinationFolder, maxDistance):
     print "After:", len(groups), "groups"
 
 if __name__ == "__main__":
-    run("data/weekdayAveragesNYC.json", "weekdaysNYC", 100)
+    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", 100)
 

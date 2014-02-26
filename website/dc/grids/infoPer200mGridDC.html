@@ -70,9 +70,9 @@
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
             
-            var which = "votes" //or "docks"
+            var which = "votes"; //or "docks"
             document.getElementById("votesButton").disabled = true;
-            var scale = "lin"
+            var scale = "lin";
     		document.getElementById("linButton").disabled = true;
 
             var overlay = new google.maps.OverlayView();
@@ -117,7 +117,7 @@
                     .range([0,1]);
             	
             	overlay.onAdd = function() {
-            		var projection = this.getProjection()
+            		var projection = this.getProjection();
             		
                     var svg = d3.select(this.getPanes().overlayLayer).append("svg");
             		var g = svg.append("g");

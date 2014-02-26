@@ -80,38 +80,38 @@
 	        	var votesScale = d3.scale.linear()
                     .domain([
                         d3.min(zipcodes.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         }),
                         d3.max(zipcodes.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })])
                     .range([0,1]);
    	        	var docksScale = d3.scale.linear()
                     .domain([
                         d3.min(zipcodes.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         }),
                         d3.max(zipcodes.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })])
                     .range([0,1]);
                     
                 var votesLogScale = d3.scale.log()
                     .domain([
                         d3.min(zipcodes.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })+1,
                         d3.max(zipcodes.features, function(d) {
-                            return parseInt(d.properties.VOTES);
+                            return parseInt(d.properties.votes);
                         })])
                     .range([0,1]);
    	        	var docksLogScale = d3.scale.log()
                     .domain([
                         d3.min(zipcodes.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })+1,
                         d3.max(zipcodes.features, function(d) {
-                            return parseInt(d.properties.BIKEDOCKS);
+                            return parseInt(d.properties.totalDocks);
                         })])
                     .range([0,1]);
             	
@@ -140,9 +140,9 @@
 		        	
 		        	function setLabel(d) {
 		        		if (which == "votes")
-				    		var text = d.properties.VOTES;
+				    		var text = d.properties.votes;
 				    	else
-				    		var text = d.properties.BIKEDOCKS;
+				    		var text = d.properties.totalDocks;
                         return d3.select(this).text(text);
                     }
                     
@@ -154,14 +154,14 @@
                     function setOpacity(d) {
                     	if (which == "votes") {
                     		if (scale == "lin")
-								return d3.select(this).transition().duration(2000).attr("fill-opacity", votesScale(d.properties.VOTES));
+								return d3.select(this).transition().duration(2000).attr("fill-opacity", votesScale(d.properties.votes));
 							else
-								return d3.select(this).transition().duration(2000).attr("fill-opacity", votesLogScale(d.properties.VOTES+1));
+								return d3.select(this).transition().duration(2000).attr("fill-opacity", votesLogScale(d.properties.votes+1));
 						} else {
 							if (scale == "lin")
-								return d3.select(this).transition().duration(2000).attr("fill-opacity", docksScale(d.properties.BIKEDOCKS));
+								return d3.select(this).transition().duration(2000).attr("fill-opacity", docksScale(d.properties.totalDocks));
 							else
-								return d3.select(this).transition().duration(2000).attr("fill-opacity", docksLogScale(d.properties.BIKEDOCKS+1));
+								return d3.select(this).transition().duration(2000).attr("fill-opacity", docksLogScale(d.properties.totalDocks+1));
 						}
                     }
 		        	
