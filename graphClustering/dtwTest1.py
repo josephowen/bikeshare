@@ -5,7 +5,7 @@ x = [0,0,0,0,1,1,2,2,3,2,1,1,0,0,0,0]
 y = [0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0]
 dist, cost, path = mlpy.dtw_std(x, y, dist_only=False)
 print dist
-exit(0)
+#exit(0)
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
 plot1 = plt.imshow(cost.T, origin='lower', cmap=cm.gray, interpolation='nearest')

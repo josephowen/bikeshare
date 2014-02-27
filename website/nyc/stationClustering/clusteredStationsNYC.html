@@ -39,7 +39,7 @@
                 center : new google.maps.LatLng(40.73, -73.99),
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
-            d3.json("../../data_nyc/stationClustering/stationsGroupedNYC.json", function(data) {
+            d3.json("../../../data/nyc/dtwClustering/stationsGroupedWeekdays100.json", function(data) {
             	data.sort(function(a, b) {
                 	return b["totalDocks"] - a["totalDocks"];
                 });
