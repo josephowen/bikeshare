@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-        <title>Actual Citi Bike Stations</title>
+        <title>NYC Weekend Station Clusters</title>
         <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
         <style type="text/css">
@@ -39,7 +39,7 @@
                 center : new google.maps.LatLng(40.73, -73.99),
                 mapTypeId : google.maps.MapTypeId.TERRAIN
             });
-            d3.json("../../../data/nyc/dtwClustering/stationsGroupedWeekdays100.json", function(data) {
+            d3.json("../../../data/nyc/dtwClustering/weekendStationsGrouped50.json", function(data) {
             	data.sort(function(a, b) {
                 	return b["totalDocks"] - a["totalDocks"];
                 });

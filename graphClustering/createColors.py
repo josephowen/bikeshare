@@ -1,8 +1,12 @@
 import colorsys as cs
 from random import random
 import json
+import sys
 
-numColors = 7
+if len(sys.argv) == 2:
+    numColors = int(sys.argv[1])
+else:
+    numColors = 7
 
 colors = []
 

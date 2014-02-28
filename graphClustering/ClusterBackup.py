@@ -5,37 +5,23 @@ import sys
 from time import sleep
 import matplotlib.pyplot as plt
 from random import random
-import mlpy
 
-def oldDistance(times1, times2):
+def distance(times1, times2):
     totalDist = 0
     for i in range(len(times1)):
         totalDist += abs(times1[i]-times2[i])
     # print totalDist
     return totalDist
-    
-    
-def dtwDistance(times1, times2):
-    dist = mlpy.dtw_std(times1, times2, dist_only=True)
-    return dist
-    
-def distance(times1, times2):
-    if distType == "ydiff":
-        return oldDistance(times1, times2)
-    elif distType == "dtw":
-        return dtwDistance(times1, times2)
         
 def showFigure(group1, group2):
     plt.clf()
     y = group1["times"]
     x = range(len(y))
     plt.plot(x,y, color=(random(), random(), random()))
-    plt.pause(0.0001)
     
     y = group2["times"]
     x = range(len(y))
     plt.plot(x,y, color=(random(), random(), random()))
-    plt.pause(0.0001)
     
     sleep(1.0)
     plt.draw()
@@ -45,14 +31,14 @@ def plotDistances(distances):
     plt.plot(steps, distances)
     plt.xlabel("Step")
     plt.ylabel("# of Distances")
-    plt.show()
+#    plt.show()
     
 def plotMinDistances(minDistances):
     steps = range(len(minDistances))
     plt.plot(steps, minDistances)
     plt.xlabel("Step")
     plt.ylabel("Min Distances")
-    plt.show()
+#    plt.show()
 
 def cluster(groups, maxDist):
     show = [False, 15]
@@ -97,7 +83,6 @@ def cluster(groups, maxDist):
         id1, id2 = allDists[shortestDist][0]
         group1, group2 = groups[id1], groups[id2]
         if show[0] and len(groups) < show[1]:
-            print "showing"
             showFigure(group1, group2)
         #Update group1 to include group2
         # sys.stdout.write("Before: " + str(groups[id1]["times"][0]) + ", " + str(groups[id2]["times"][0]))
@@ -155,7 +140,7 @@ def cluster(groups, maxDist):
     print
     
     # plotDistances(distEachStep)
-#    plotMinDistances(minDistEachStep)
+    plotMinDistances(minDistEachStep)
 
     return groups
                     
@@ -176,8 +161,19 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
         thisGroup = {}
         thisGroup["contents"] = [int(element["station"])]
         times = []
+        total = 0.0
+        count = 0
         for j in range(len(element["times"])):
-            times.append(element["times"][j]["percentFull"])
+            total += element["times"][j]["percentFull"]
+            count += 1
+        avg = total/count
+        print "Average:", avg
+        if avg != 0:
+            for j in range(len(element["times"])):
+                times.append(element["times"][j]["percentFull"]/avg)
+        else:
+            for j in range(len(element["times"])):
+                times.append(0.0)
         thisGroup["times"] = times
         groups[i] = thisGroup
 		
@@ -203,18 +199,16 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
     os.system("createColors.py "+str(len(groups)))
 
 if __name__ == "__main__":
-    if len(sys.argv) == 6:
+    if len(sys.argv) == 5:
         inputFile = sys.argv[1]
         outputFolder = sys.argv[2]
         fileName = sys.argv[3]
         dist = int(sys.argv[4])
-        distType = sys.argv[5]
     else:
         inputFile = "../data/nyc/weekdayAverages.json"
         outputFolder = "../data/nyc/dtwClustering/weekdays"
         fileName = "dendrogramGroups"
         dist = 100
-        distType = "ydiff"
     
 #    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", "dendrogramGroups", 100)
     run(inputFile, outputFolder, fileName, dist)

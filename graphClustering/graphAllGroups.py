@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
-from datetime import datetime
+#from datetime import datetime
 import json
-from random import random
+#from random import random
 import sys
-from time import sleep
+#from time import sleep
 
 with open("colors.dat", "r") as f:
     allColors = json.load(f)
 
-with open("../data/nyc/dtwClustering/"+sys.argv[1], "r") as f:
+with open(sys.argv[1], "r") as f:
     allGroups = json.load(f)
 
 for i, group in enumerate(allGroups):
@@ -22,4 +22,5 @@ for i, group in enumerate(allGroups):
 plt.xlabel("Minute")
 plt.ylabel("% Full")
 plt.title(sys.argv[1])
-plt.show()
+#plt.show()
+plt.savefig(sys.argv[2])
