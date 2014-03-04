@@ -5,8 +5,10 @@ def runSet(city, distance, days, distanceType):
     os.system("combine.py ../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json ../data/"+city+"/stations.json ../data/"+city+"/dtwClustering/"+days+"StationsGrouped"+distance+".json")
     os.system("graphAllGroups.py ../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json ../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+".png")
     
-runSet("nyc", "50", "weekday", "ydiff")
-runSet("nyc", "50", "weekend", "ydiff")
+runSet("nyc", "20", "weekday", "dtw")
+
+#runSet("nyc", "50", "weekday", "ydiff")
+#runSet("nyc", "50", "weekend", "ydiff")
 
 #runSet("dc", "50", "weekday", "ydiff")
 #runSet("dc", "50", "weekend", "ydiff")

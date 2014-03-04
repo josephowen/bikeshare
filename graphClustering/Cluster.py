@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from random import random
 import mlpy
 
-def oldDistance(times1, times2):
+def yDistance(times1, times2):
     totalDist = 0
     for i in range(len(times1)):
         totalDist += abs(times1[i]-times2[i])
@@ -16,12 +16,20 @@ def oldDistance(times1, times2):
     
     
 def dtwDistance(times1, times2):
+    mx = float(max(times1))
+    mn = float(min(times1))
+    if mx-mn > 0:
+        times1 = [(item-mn)/(mx-mn) for item in times1]
+    mx = float(max(times2))
+    mn = float(min(times2))
+    if mx-mn > 0:
+        times2 = [(item-mn)/(mx-mn) for item in times2]
     dist = mlpy.dtw_std(times1, times2, dist_only=True)
     return dist
     
 def distance(times1, times2):
     if distType == "ydiff":
-        return oldDistance(times1, times2)
+        return yDistance(times1, times2)
     elif distType == "dtw":
         return dtwDistance(times1, times2)
         
@@ -154,8 +162,8 @@ def cluster(groups, maxDist):
             
     print
     
-    # plotDistances(distEachStep)
-#    plotMinDistances(minDistEachStep)
+#     plotDistances(distEachStep)
+    plotMinDistances(minDistEachStep)
 
     return groups
                     
@@ -215,6 +223,7 @@ if __name__ == "__main__":
         fileName = "dendrogramGroups"
         dist = 100
         distType = "ydiff"
+        print "Using preset arguments"
     
 #    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", "dendrogramGroups", 100)
     run(inputFile, outputFolder, fileName, dist)
