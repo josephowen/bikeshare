@@ -1,8 +1,9 @@
 import json
-from LatLongDist import getDist
 from math import ceil
 import sys
 import os
+sys.path.insert(0, "../utilities")
+from LatLongDist import getDist
 
 gridSize = float(sys.argv[1]) #km
 folder = sys.argv[2]

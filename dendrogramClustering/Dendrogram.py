@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+sys.path.insert(0, "../utilities")
 from LatLongDist import getDist
 
 def cluster(groups, maxDist):
