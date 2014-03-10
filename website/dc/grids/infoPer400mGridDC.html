@@ -117,7 +117,7 @@
                     .range([0,1]);
             	
             	overlay.onAdd = function() {
-            		var projection = this.getProjection()
+            		var projection = this.getProjection();
             		
                     var svg = d3.select(this.getPanes().overlayLayer).append("svg");
             		var g = svg.append("g");

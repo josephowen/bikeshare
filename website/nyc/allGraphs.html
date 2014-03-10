@@ -6,11 +6,13 @@
         <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
         <style type="text/css">
+        	
 			html, body {
 				width: 100%;
 				height: 100%;
 				margin: 0;
 				padding: 0;
+				font: 16px sans-serif;
 			}
 			
 			.axis path, .axis line {
@@ -30,20 +32,50 @@
 		</style>
     </head>
     <body>
+    	
+        <div id="topButtons" style="float:left; width:100px;">
+        </div>
+   
+        <div id="graph" style="margin-left:100px; height:calc(100% - 100px);">
+        </div>
+    
+        <div id="bottomButtons" style="float:right; height:100px;">
+        </div>
+    	
+    	
         <script type="text/javascript">
-        	var totalWidth = document.getElementsByTagName("body")[0].offsetWidth-20;
-        	var totalHeight = document.getElementsByTagName("body")[0].offsetHeight-20;
+            var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
+            
+            for (i in labels) {
+            	var label = labels[i];
+            	
+            	document.getElementById("topButtons").innerHTML += '<button id="x_'+label[0]+'+" name="totalDocksY" onclick="changeY(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
+            	
+            	document.getElementById("bottomButtons").innerHTML += '<button id="y_'+label[0]+'" name="totalDocksY" onclick="changeX(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
+            }
         
-			var margin = {top: 20, right: 20, bottom: 30, left: 40};
-			var width = totalWidth - margin.left - margin.right;
-			var height = totalHeight - margin.top - margin.bottom;
+        	//var totalWidth = document.getElementsByTagName("body")[0].offsetWidth-20;
+        	//var totalHeight = document.getElementsByTagName("body")[0].offsetHeight-20;
+        	
+        	var graphWidth = document.getElementById("graph").offsetWidth;
+        	var graphHeight = document.getElementById("graph").offsetHeight;
+        	
+        	console.log(graphWidth, graphHeight);
+        	
+			var margin = {top: 20, right: 20, bottom: 30, left: 60};
+			var width = graphWidth - margin.left - margin.right;
+			var height = graphHeight - margin.top - margin.bottom;
+			//var width = totalWidth - margin.left - margin.right;
+			//var height = totalHeight - margin.top - margin.bottom;
 			
 			var tooltip = d3.select("body").append("div")
 				.attr("class", "tooltip")
 				.style("opacity", 0);
+				
+			var funcs = {};
 			
             d3.json("../../data/nyc/stations.json", function(data) {
-            	console.log(data);
+            	//console.log(data);
             	data.sort(function(a, b) {
                 	return b["totalDocks"] - a["totalDocks"];
                 });
@@ -74,7 +106,8 @@
                 var yMap = function(d) {return yScale(yValue(d));};
                 var yAxis = d3.svg.axis().scale(yScale).orient("left");
 	                
-                var svg = d3.select("body").append("svg")
+                var svg = d3.select("#graph").append("svg")
+                	.attr("id", "graphsvg")
 					.attr("width", width + margin.left + margin.right)
 					.attr("height", height + margin.top + margin.bottom)
 					.append("g")
@@ -82,10 +115,12 @@
 	                
                 //x-axis
                 svg.append("g")
+                	.attr("id", "xaxis")
                 	.attr("class", "x axis")
                 	.attr("transform", "translate(0,"+height+")")
                 	.call(xAxis)
                 	.append("text")
+                	.attr("id", "xlabel")
                 	.attr("class", "label")
                 	.attr("x", width)
                 	.attr("y", -6)
@@ -94,10 +129,13 @@
                 	
                 //y-axis
                 svg.append("g")
+                	.attr("id", "yaxis")
                 	.attr("class", "y axis")
                 	.call(yAxis)
                 	.append("text")
+                	.attr("id", "ylabel")
                 	.attr("class", "label")
+                	.attr("transform", "rotate(-90)")
                 	.attr("y", 6)
                 	.attr("dy", "0.71em")
                 	.style("text-anchor", "end")
@@ -125,7 +163,109 @@
 							.duration(500)
 							.style("opacity", 0);
 					});
+					
+				funcs.changeX = function(label, labelName) {
+					xValue = function(d) {return d[label];};
+					
+					var min = d3.min(data, function(d) {
+                		    return parseFloat(d[label]);
+               		});
+               		var max = d3.max(data, function(d) {
+                		    return parseFloat(d[label]);
+                   		});
+                       
+           			var epsilon = (max-min)/100.0;
+					
+					
+					xScale.domain([min-epsilon, max+epsilon]);
+	                    
+					svg.selectAll(".dot")
+						.data(data)
+						.transition()
+						.duration(100)
+						.attr("cx", xMap);
+						
+					svg.select("#xaxis")
+	                	.call(xAxis);
+	                	
+                	svg.select("#xlabel")
+                		.text(labelName);
+				};
+				
+				funcs.changeY = function(label, labelName) {
+					yValue = function(d) {return d[label];};
+					
+					var min = d3.min(data, function(d) {
+	                        return parseFloat(d[label]);
+                   		});
+          		 	var max = d3.max(data, function(d) {
+	                        return parseFloat(d[label]);
+                   		});
+                       
+               		var epsilon = (max-min)/100.0;
+               		
+               		console.log(max, min, epsilon);
+					
+					yScale.domain([min-epsilon, max+epsilon]);
+	                    
+					svg.selectAll(".dot")
+						.data(data)
+						.transition()
+						.duration(100)
+						.attr("cy", yMap);
+						
+					svg.select("#yaxis")
+	                	.call(yAxis);
+	                	
+                	svg.select("#ylabel")
+						.text(labelName);
+				};
+				
+				funcs.resizeWindow = function() {
+					graphWidth = document.getElementById("graph").offsetWidth;
+		        	graphHeight = document.getElementById("graph").offsetHeight;
+		        	
+		        	width = graphWidth - margin.left - margin.right;
+					height = graphHeight - margin.top - margin.bottom;
+		        	
+		        	console.log(graphWidth, graphHeight);
+		        	
+		        	d3.select("#graphsvg")
+		        		.attr("class", "test")
+						.attr("width", width + margin.left + margin.right)
+						.attr("height", height + margin.top + margin.bottom);
+                	
+					xScale.range([0, width]);
+					yScale.range([height, 0]);
+					
+					svg.select("#xaxis")
+						.call(xAxis)
+						.attr("transform", "translate(0,"+height+")");
+                	svg.select("#xlabel").attr("x", width);
+                	
+					svg.select("#yaxis")
+	                	.call(yAxis);
+	                	
+					svg.selectAll(".dot")
+						.data(data)
+						.attr("cx", xMap)
+						.attr("cy", yMap);
+				};
             });
+            
+            function changeX(label, labelName) {
+            	funcs.changeX(label, labelName);
+            }
+            
+            function changeY(label, labelName) {
+            	funcs.changeY(label, labelName);
+            }
+            
+            window.onresize = function() {
+            	funcs.resizeWindow();
+            };
+            
         </script>
+		
     </body>
 </html>
