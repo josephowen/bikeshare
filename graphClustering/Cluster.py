@@ -63,8 +63,8 @@ def plotMinDistances(minDistances):
     plt.show()
 
 def cluster(groups, maxDist):
-#    show = [False, 15]
-    show = [True, 400]
+    show = [False, 15]
+#    show = [True, 400]
     if show[0]:
         plt.ion()
         plt.xlabel("Time")
@@ -164,7 +164,7 @@ def cluster(groups, maxDist):
     print
     
 #     plotDistances(distEachStep)
-    plotMinDistances(minDistEachStep)
+#    plotMinDistances(minDistEachStep)
 
     return groups
                     
