@@ -41,6 +41,10 @@
         </div>
     
     	<div id="bottomPanel" style="position:relative; height:50px;">
+    		<div id="options" style="float:left;">
+    			<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" />Color Groups</label>
+    		</div>
+    		
         	<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
         	</div>
 		</div>
@@ -63,7 +67,7 @@
         	var graphWidth = document.getElementById("graph").offsetWidth;
         	var graphHeight = document.getElementById("graph").offsetHeight;
         	
-        	console.log(graphWidth, graphHeight);
+        	// console.log(graphWidth, graphHeight);
         	
 			var margin = {top: 20, right: 20, bottom: 30, left: 60};
 			var width = graphWidth - margin.left - margin.right;
@@ -166,7 +170,6 @@
             		.attr("r", 3.5)
             		.attr("cx", xMap)
             		.attr("cy", yMap)
-            		.style("fill", function(d) {return getColor(d);})
 					.on("mouseover", function(d) {
 						tooltip.transition()
 							.duration(200)
@@ -239,6 +242,18 @@
 						.text(labelName);
 				};
 				
+				funcs.toggleColorGroups = function(element) {
+					if (element.checked) {
+						svg.selectAll(".dot")
+							.data(data)
+							.style("fill", function(d) {return getColor(d);});
+					}
+					else {
+						svg.selectAll(".dot")
+							.style("fill", "#000000");
+					}
+				};
+				
 				funcs.resizeWindow = function() {
 					graphWidth = document.getElementById("graph").offsetWidth;
 		        	graphHeight = document.getElementById("graph").offsetHeight;
@@ -277,6 +292,10 @@
             
             function changeY(label, labelName) {
             	funcs.changeY(label, labelName);
+            }
+            
+            function toggleColorGroups(element) {
+            	funcs.toggleColorGroups(element);
             }
             
             window.onresize = function() {

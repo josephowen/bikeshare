@@ -14,8 +14,20 @@ def yDistance(times1, times2):
     # print totalDist
     return totalDist
     
-    
 def dtwDistance(times1, times2):
+    n = len(times1)
+    m = len(times2)        
+    w = 12
+
+    dtw = [[sys.maxint]*(m) for x in xrange(n)]
+    dtw[0][0] = 0
+    
+    for i in xrange(len(times1)):
+        for j in xrange(max(1,i-w), min()):
+            pass
+    
+    
+def dtwDistanceMLPY(times1, times2):
     mx = float(max(times1))
     mn = float(min(times1))
     if mx-mn > 0:

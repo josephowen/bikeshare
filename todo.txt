@@ -1,0 +1,10 @@
+Add to graph app:
+	-scalar business metric (how much does it change over the day)
+	-binary business metric (did it change in time step)
+	-flow metric (directionality) (for DC)
+
+Combine graph app with map
+
+Email CitiBike to ask for flow data (talk about how great it is)
+
+Email Ollie to ask for updated tracking data (promise of future publications)
