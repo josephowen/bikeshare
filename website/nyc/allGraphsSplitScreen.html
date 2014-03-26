@@ -109,7 +109,8 @@
             var map = new google.maps.Map(d3.select("#map").node(), {
                 zoom : 12,
                 center : new google.maps.LatLng(40.73, -73.99),
-                mapTypeId : google.maps.MapTypeId.TERRAIN
+                mapTypeId : google.maps.MapTypeId.TERRAIN,
+                clickableLabels : false
             });
             d3.json("../../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
             	data.sort(function(a, b) {
@@ -122,14 +123,15 @@
 	                        return parseInt(d["totalDocks"]);
 	                    }),
 	                    d3.max(data, function(d) {
-	                        return parseInt(d["totalDocks"]);
+							return parseInt(d["totalDocks"]);
 	                    })])
 	                .range([2,15]);
 	            
 	            var overlay = new google.maps.OverlayView();
 	            
 	            overlay.onAdd = function() {
-	                var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
+	                //var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
+	                var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
 	                
 	                overlay.draw = function() {
 	                    var projection = this.getProjection();
@@ -137,7 +139,7 @@
 	
 	                    var marker = layer.selectAll("svg")
 	                        .data(d3.entries(data))
-	                        .each(transform)// update existing markers
+							.each(transform)// update existing markers
 	                        .enter()
 	                        .append("svg:svg")
 	                        .each(transform)
@@ -159,7 +161,11 @@
 	                        		return "rgb("+Math.round(col.r*255)+","+Math.round(col.g*255)+","+Math.round(col.b*255)+")";
 	                        	else
 	                        		return "rgb(0,0,0)";
-	                        });
+	                        })
+	                        .attr("cursor", "pointer")
+	                        .on("mouseover", function(d) {
+	                        	console.log("MOUSEOVER");
+							});
 	
 	                    function transform(d) {
 	                        d = new google.maps.LatLng(d.value["lat"], d.value["lon"]);
@@ -292,6 +298,7 @@
             		.attr("r", 3.5)
             		.attr("cx", xMap)
             		.attr("cy", yMap)
+            		.attr("cursor", "pointer")
 					.on("mouseover", function(d) {
 						tooltip.transition()
 							.duration(200)
