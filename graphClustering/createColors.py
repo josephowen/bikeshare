@@ -3,10 +3,12 @@ from random import random
 import json
 import sys
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
     numColors = int(sys.argv[1])
+    colorFile = sys.argv[2]
 else:
     numColors = 7
+    colorFile = "../data/nyc/dtwClustering/weekdays/colors100.json"
 
 colors = []
 
@@ -23,5 +25,5 @@ for i in range(numColors):
     colors.append(thisColorJson)
 
     
-with open("colors.dat", "w") as f:
+with open(colorFile, "w") as f:
     json.dump(colors, f)

@@ -5,7 +5,7 @@ import json
 import sys
 #from time import sleep
 
-with open("colors.dat", "r") as f:
+with open(sys.argv[3], "r") as f:
     allColors = json.load(f)
 
 with open(sys.argv[1], "r") as f:

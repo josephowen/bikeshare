@@ -221,21 +221,23 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
         
     print "After:", len(groups), "groups"
     
-    os.system("createColors.py "+str(len(groups)))
+    os.system("createColors.py "+str(len(groups))+" "+colorFile)
 
 if __name__ == "__main__":
-    if len(sys.argv) == 6:
+    if len(sys.argv) == 7:
         inputFile = sys.argv[1]
         outputFolder = sys.argv[2]
         fileName = sys.argv[3]
         dist = int(sys.argv[4])
         distType = sys.argv[5]
+        colorFile = sys.argv[6]
     else:
         inputFile = "../data/nyc/weekdayAverages.json"
         outputFolder = "../data/nyc/dtwClustering/weekdays"
         fileName = "dendrogramGroups"
         dist = 100
         distType = "ydiff"
+        colorFile = "../data/nyc/dtwClustering/weekdays/colors100.json"
         print "Using preset arguments"
     
 #    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", "dendrogramGroups", 100)
