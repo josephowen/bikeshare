@@ -120,7 +120,7 @@
 			var graphFuncs = {};
 			
 			
-			d3.json("../../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
+			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
 				// var getColor = function(d) {
 					// // console.log(d.color);
 					// if (d.color != undefined)
@@ -149,7 +149,7 @@
 	                mapTypeId : google.maps.MapTypeId.TERRAIN,
 	                clickableLabels : false
 	            });
-	            d3.json("../../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
+	            d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
 	            	data.sort(function(a, b) {
 	                	return b["totalDocks"] - a["totalDocks"];
 	                });

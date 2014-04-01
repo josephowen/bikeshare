@@ -112,7 +112,7 @@
                 mapTypeId : google.maps.MapTypeId.TERRAIN,
                 clickableLabels : false
             });
-            d3.json("../../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
+            d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
             	data.sort(function(a, b) {
                 	return b["totalDocks"] - a["totalDocks"];
                 });
