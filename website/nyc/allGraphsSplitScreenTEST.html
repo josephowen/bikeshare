@@ -71,6 +71,12 @@
 				background-color:#FFFFFF;
 			}
 			
+			.lineplotpath {
+				/*stroke: steelblue;*/
+				stroke-width: 3px;
+				fill: none;
+			}
+			
 		</style>
     </head>
     <body>
@@ -119,6 +125,13 @@
 				
 			var graphFuncs = {};
 			
+			var lineChartWidth = document.getElementById("onePlot").offsetWidth;
+        	var lineChartHeight = document.getElementById("onePlot").offsetHeight;
+			var lineChartWidth = lineChartWidth - margin.left - margin.right;
+			var lineChartHeight = lineChartHeight - margin.top - margin.bottom;
+			
+			var lineChartFuncs = {};
+			
 			
 			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
 				// var getColor = function(d) {
@@ -138,7 +151,7 @@
 					colors[i].s = d3.rgb(Math.floor(colors[i].r*255), Math.floor(colors[i].g*255), Math.floor(colors[i].b*255)).toString();
 				}
 				
-				console.log(colors);
+				//console.log(colors);
 				
 				//*******************************************************************************************
 				//****************************************MAP STUFF******************************************
@@ -197,7 +210,7 @@
 			                	return Math.round(d.y);
 			                })+100;
 			                
-			                console.log(minX, maxX, minY, maxY);
+			                // console.log(minX, maxX, minY, maxY);
 		                    
 		                    pane
 		                    	.style("top", minY)
@@ -447,7 +460,7 @@
 	                       
 	               		var epsilon = (max-min)/100.0;
 	               		
-	               		console.log(max, min, epsilon);
+	               		// console.log(max, min, epsilon);
 						
 						yScale.domain([min-epsilon, max+epsilon]);
 		                    
@@ -519,36 +532,22 @@
 				//***************************************LINECHART STUFF*************************************
 				//*******************************************************************************************
 	            d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
-	            	console.log(data);
+	            	// console.log(data);
 	            	
-	            	var xValue = function(d) {return d["totalDocks"];};
 		            var xScale = d3.scale.linear()
-		                .domain([
-		                    d3.min(data, function(d) {
-		                        return parseInt(d["totalDocks"]);
-	                        })-1,
-		                    d3.max(data, function(d) {
-		                        return parseInt(d["totalDocks"]);
-		                    })+1])
+		                .domain([0,1500])
 		                .range([0, width]);
-		            var xMap = function(d) {return xScale(xValue(d));};
+		            var xMap = function(d) {return xScale(d);};
 	                var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 		            
-		            var yValue = function(d) {return d["request"];};
 	                var yScale = d3.scale.linear()
-		                .domain([
-		                    d3.min(data, function(d) {
-		                        return parseInt(d["request"]);
-		                    })-1,
-		                    d3.max(data, function(d) {
-		                        return parseInt(d["request"]);
-		                    })+1])
+		                .domain([0,1])
 		                .range([height, 0]);
-	                var yMap = function(d) {return yScale(yValue(d));};
+	                var yMap = function(d) {return yScale(d);};
 	                var yAxis = d3.svg.axis().scale(yScale).orient("left");
 		                
-	                var svg = d3.select("#graph").append("svg")
-	                	.attr("id", "graphsvg")
+	                var svg = d3.select("#onePlot").append("svg")
+	                	.attr("id", "linechartsvg")
 						.attr("width", width + margin.left + margin.right)
 						.attr("height", height + margin.top + margin.bottom)
 						.append("g")
@@ -566,7 +565,7 @@
 	                	.attr("x", width)
 	                	.attr("y", -6)
 	                	.style("text-anchor", "end")
-	                	.text("Total Docks");
+	                	.text("Minute");
 	                	
 	                //y-axis
 	                svg.append("g")
@@ -576,30 +575,66 @@
 	                	.append("text")
 	                	.attr("id", "ylabel")
 						.attr("class", "label")
-	                	.attr("transform", "rotate(-90)")
+						.attr("transform", "rotate(-90)")
 	                	.attr("y", 6)
 	                	.attr("dy", "0.71em")
 	                	.style("text-anchor", "end")
-	                	.text("Request Value");
+	                	.text("Percent Full");
 	                	
+	                var line = d3.svg.line()
+	                	.x(function(d,i) {
+	                		return xMap(i*5);
+	                	})
+	                	.y(function(d) {
+	                		return yMap(d);
+	                	});
 	                	
-	            	svg.selectAll(".dot")
-	            		.data(data)
-	            		.enter().append("circle")
-	            		.attr("class", "dot")
-	            		.attr("id", function(d) {
-	            				return "graphDot"+d["id"];
-	            			})
-	            		.attr("r", 3.5)
-	            		.attr("cx", xMap)
-	            		.attr("cy", yMap)
-	            		.attr("fill", function(d) {
-	            			if (d.group == undefined) {
-	            				return "#000000";
-	            			} else {
-	            				return colors[d.group].s;
-	            			}
-	            		});
+                	console.log(data);
+	                	
+	                svg.selectAll(".lineplotpath")
+	                	.data(data)
+	                	.enter()
+	                	.append("path")
+	                	.attr("class", "lineplotpath")
+	                	.attr("d", function(d) {
+	                		return line(d.times);
+	                	})
+	                	.attr("stroke", function(d, i) {
+	                		console.log(i);
+	                		return colors[i].s;
+	                	});
+	                	
+	                lineChartFuncs.resizeWindow = function() {
+						var lineChartWidth = document.getElementById("onePlot").offsetWidth;
+			        	var lineChartHeight = document.getElementById("onePlot").offsetHeight;
+						var lineChartWidth = lineChartWidth - margin.left - margin.right;
+						var lineChartHeight = lineChartHeight - margin.top - margin.bottom;
+			        	
+			        	// console.log(graphWidth, graphHeight);
+			        	
+			        	d3.select("#linechartsvg")
+			        		.attr("class", "test")
+							.attr("width", lineChartWidth + margin.left + margin.right)
+							.attr("height", lineChartHeight + margin.top + margin.bottom);
+	                	
+						xScale.range([0, width]);
+						yScale.range([height, 0]);
+						
+						svg.select("#xaxis")
+							.call(xAxis)
+							.attr("transform", "translate(0,"+height+")");
+	                	svg.select("#xlabel").attr("x", width);
+	                	
+						svg.select("#yaxis")
+		                	.call(yAxis);
+		                	
+	                	svg.selectAll(".lineplotpath")
+	                	.data(data)
+	                	.attr("d", function(d) {
+	                		return line(d.times);
+	                	});
+					};
+	                	
         		});
 	        });
             
@@ -617,6 +652,7 @@
             
             window.onresize = function() {
             	graphFuncs.resizeWindow();
+            	lineChartFuncs.resizeWindow();
             };
             
         </script>
