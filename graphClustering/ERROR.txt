@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\Joseph\Documents\Bikeshare\graphClustering\averagePercentFullNYC.py", line 146, in <module>
+    thisTime["percentFull"] = float(time["availableBikesTotal"])/time["totalDocksTotal"]
+TypeError: 'type' object has no attribute '__getitem__'
