@@ -253,9 +253,11 @@
 		                        .attr("cursor", "pointer")
 		                        .on("mouseover", function(d) {
 		                        	graphFuncs.hoverGroup(d.group, d.id);
+		                        	lineChartFuncs.hoverGroup(d.group);
 								})
 								.on("mouseout", function(d) {
 									graphFuncs.unhoverGroup();
+									lineChartFuncs.unhoverGroup();
 								});
 		
 		                    function transform(d) {
@@ -584,12 +586,10 @@
 	                var line = d3.svg.line()
 	                	.x(function(d,i) {
 	                		return xMap(i*5);
-	                	})
+						})
 	                	.y(function(d) {
 	                		return yMap(d);
 	                	});
-	                	
-                	console.log(data);
 	                	
 	                svg.selectAll(".lineplotpath")
 	                	.data(data)
@@ -600,9 +600,30 @@
 	                		return line(d.times);
 	                	})
 	                	.attr("stroke", function(d, i) {
-	                		console.log(i);
 	                		return colors[i].s;
 	                	});
+	                	
+                	lineChartFuncs.hoverGroup = function(group) {
+                		console.log("hover");
+                		svg.selectAll(".lineplotpath")
+                		.data(data)
+                		.transition()
+						.duration(100)
+                		.attr("stroke-opacity", function(d, i) {
+                			if (i == group)
+                				return 1;
+            				else
+            					return 0.3;
+                		});
+                	};
+                	
+                	lineChartFuncs.unhoverGroup = function() {
+                		svg.selectAll(".lineplotpath")
+                		.data(data)
+                		.transition()
+						.duration(100)
+                		.attr("stroke-opacity", 1);
+                	};
 	                	
 	                lineChartFuncs.resizeWindow = function() {
 						var lineChartWidth = document.getElementById("onePlot").offsetWidth;
