@@ -5,6 +5,7 @@ from datetime import datetime, date, time, timedelta
 import json
 from time import clock
 import sys
+import os
 
 startClock = clock()
 
@@ -139,11 +140,11 @@ for dayKey in days.keys():
         sys.stdout.flush()
         for thisTime in station["times"]:
             if thisTime["totalDocksTotal"] == 0:
-                # print time["availableBikesTotal"], time["availableBikesTotal"], time["totalDocksTotal"]
+                # print thisTime["availableBikesTotal"], thisTime["availableBikesTotal"], thisTime["totalDocksTotal"]
                 numZeros += 1
                 thisTime["percentFull"] = 0.0
             else:
-                thisTime["percentFull"] = float(time["availableBikesTotal"])/time["totalDocksTotal"]
+                thisTime["percentFull"] = float(thisTime["availableBikesTotal"])/thisTime["totalDocksTotal"]
             # print time
     
 # print stationLookup
@@ -157,6 +158,8 @@ print "Parsed in", endClock-startClock, "seconds"
 for dayKey in days.keys():
     day = days[dayKey]
     fileName = "average5min/"+dayKey+"AveragesNYC.json"
+    if not os.path.exists("average5min"):
+        os.mkdir("average5min")
     outputFile = open(fileName, "w")
     json.dump(day, outputFile)
     outputFile.close()

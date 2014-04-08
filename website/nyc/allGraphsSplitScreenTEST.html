@@ -109,6 +109,9 @@
 		</div>
 		
 		<script type="text/javascript">
+			var allFuncs = {};
+		
+			var mapFuncs = {};
 		
         	var graphWidth = document.getElementById("graph").offsetWidth;
         	var graphHeight = document.getElementById("graph").offsetHeight;
@@ -236,6 +239,7 @@
 	                    		.each(transform)
 	                    		.enter()
 	                    		.append("circle")
+	                    		.attr("class", "mapCircle")
 	                    		.each(transform)
 		                    	.attr("id", function(d) {
 		                    			return "mapDot"+d.id;
@@ -252,12 +256,10 @@
 		                        })
 		                        .attr("cursor", "pointer")
 		                        .on("mouseover", function(d) {
-		                        	graphFuncs.hoverGroup(d.group, d.id);
-		                        	lineChartFuncs.hoverGroup(d.group);
+		                        	allFuncs.hoverGroup(d.group, d.id);
 								})
 								.on("mouseout", function(d) {
-									graphFuncs.unhoverGroup();
-									lineChartFuncs.unhoverGroup();
+									allFuncs.unhoverGroup();
 								});
 		
 		                    function transform(d) {
@@ -266,6 +268,28 @@
 		                        return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
 		                    }
 		                };
+		                
+		                mapFuncs.hoverGroup = function(group, id) {
+							pane.selectAll(".mapCircle")
+								.data(data)
+								.transition()
+								.duration(100)
+								.attr("fill-opacity", function(d) {
+									if (d.group == group)
+										return 1;
+									else
+										return 0.3;
+								});
+	
+						};
+						
+						mapFuncs.unhoverGroup = function() {
+							pane.selectAll(".mapCircle")
+								.data(data)
+								.transition()
+								.duration(100)
+								.attr("fill-opacity", 1);
+						};
 		            };
 		            
 		            overlay.setMap(map);
@@ -372,6 +396,7 @@
 	            		})
 	            		.attr("cursor", "pointer")
 						.on("mouseover", function(d) {
+							allFuncs.hoverGroup(d.group, d.id);
 							tooltip.transition()
 								.duration(200)
 								.style("opacity", 1.0);
@@ -381,6 +406,7 @@
 								.style("top", (d3.event.pageY - 40) + "px");
 						})
 						.on("mouseout", function(d) {
+							allFuncs.unhoverGroup();
 							tooltip.transition()
 								.duration(500)
 								.style("opacity", 0);
@@ -645,7 +671,7 @@
 							.call(xAxis)
 							.attr("transform", "translate(0,"+height+")");
 	                	svg.select("#xlabel").attr("x", width);
-	                	
+						
 						svg.select("#yaxis")
 		                	.call(yAxis);
 		                	
@@ -657,6 +683,18 @@
 					};
 	                	
         		});
+        		
+        		allFuncs.hoverGroup = function(group, id) {
+        			mapFuncs.hoverGroup(group, id);
+	        		graphFuncs.hoverGroup(group, id);
+            		lineChartFuncs.hoverGroup(group);
+        		};
+        		
+        		allFuncs.unhoverGroup = function() {
+        			mapFuncs.unhoverGroup();
+	        		graphFuncs.unhoverGroup();
+					lineChartFuncs.unhoverGroup();
+        		};
 	        });
             
             function changeX(label, labelName) {
