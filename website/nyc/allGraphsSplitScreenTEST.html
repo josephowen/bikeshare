@@ -73,7 +73,6 @@
 			
 			.lineplotpath {
 				/*stroke: steelblue;*/
-				stroke-width: 3px;
 				fill: none;
 			}
 			
@@ -254,7 +253,7 @@
 			            				return colors[d.group].s;
 			            			}
 		                        })
-		                        .attr("cursor", "pointer")
+								.attr("cursor", "pointer")
 		                        .on("mouseover", function(d) {
 		                        	allFuncs.hoverGroup(d.group, d.id);
 								})
@@ -275,12 +274,12 @@
 								.transition()
 								.duration(100)
 								.attr("fill-opacity", function(d) {
-									if (d.group == group)
+									if (d.group == group) {
 										return 1;
-									else
-										return 0.3;
+									} else {
+										return 0.2;
+									}
 								});
-	
 						};
 						
 						mapFuncs.unhoverGroup = function() {
@@ -413,28 +412,48 @@
 						});
 						
 					graphFuncs.hoverGroup = function(group, id) {
-						svg.selectAll(".dot")
-							.data(data)
-							.transition()
-							.duration(100)
-							.attr("fill-opacity", function(d) {
-								if (d.group == group)
-									return 1;
-								else
-									return 0.3;
-							})
-							.attr("stroke", function(d) {
-								if (d.group == group)
-									return "black";
-								else
-									return "none";
-							})
-							.attr("r", function(d) {
-								if (d.id == id)
-									return 10;
-								else
-									return 3.5;
-							});
+						if (id != null) {
+							svg.selectAll(".dot")
+								.data(data)
+								.transition()
+								.duration(100)
+								.attr("fill-opacity", function(d) {
+									if (d.group == group)
+										return 1;
+									else
+										return 0.3;
+								})
+								.attr("stroke", function(d) {
+									if (d.group == group)
+										return "black";
+									else
+										return "none";
+								})
+								.attr("r", function(d) {
+									if (d.id == id)
+										return 10;
+									else
+										return 3.5;
+								});
+						}
+						else {
+							svg.selectAll(".dot")
+								.data(data)
+								.transition()
+								.duration(100)
+								.attr("fill-opacity", function(d) {
+									if (d.group == group)
+										return 1;
+									else
+										return 0.3;
+								})
+								.attr("stroke", function(d) {
+									if (d.group == group)
+										return "black";
+									else
+										return "none";
+								});
+						}
 
 					};
 					
@@ -627,7 +646,15 @@
 	                	})
 	                	.attr("stroke", function(d, i) {
 	                		return colors[i].s;
-	                	});
+	                	})
+	                	.attr("stroke-width", "3px")
+	                	.attr("cursor", "pointer")
+	                	.on("mouseover", function(d, i) {
+                        	allFuncs.hoverGroup(i, null);
+						})
+						.on("mouseout", function(d) {
+							allFuncs.unhoverGroup();
+						});
 	                	
                 	lineChartFuncs.hoverGroup = function(group) {
                 		console.log("hover");
@@ -635,6 +662,12 @@
                 		.data(data)
                 		.transition()
 						.duration(100)
+						.attr("stroke-width", function(d, i) {
+							if (i == group)
+								return "10px";
+							else
+								return "3px";
+						})
                 		.attr("stroke-opacity", function(d, i) {
                 			if (i == group)
                 				return 1;
@@ -648,6 +681,7 @@
                 		.data(data)
                 		.transition()
 						.duration(100)
+						.attr("stroke-width", "3px")
                 		.attr("stroke-opacity", 1);
                 	};
 	                	
