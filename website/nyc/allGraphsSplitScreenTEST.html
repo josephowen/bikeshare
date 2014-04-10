@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-        <title>A Bunch of Graphs</title>
-        <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-        <style type="text/css">
-        	
+	<head>
+		<meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+		<title>A Bunch of Graphs</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<style type="text/css">
+			
 			html, body {
 				width: 100%;
 				height: 100%;
@@ -19,28 +19,28 @@
 			#map {
 				height:50%;
 			}
-			            
-            .stations, .stations svg {
-                position: absolute;
+						
+			.stations, .stations svg {
+				position: absolute;
 			}
-            
-            .stations svg {
-                width: 32px;
-                height: 32px;
-                font: 10px sans-serif;
-            }
+			
+			.stations svg {
+				width: 32px;
+				height: 32px;
+				font: 10px sans-serif;
+			}
 
-            .stations circle {
-	            /*fill: brown;*/
-                stroke: black;
-                stroke-width: 1.0px;
-            }
-            
-            
-            #bottom {
-            	height:50%;
-            }
-            
+			.stations circle {
+				/*fill: brown;*/
+				stroke: black;
+				stroke-width: 1.0px;
+			}
+			
+			
+			#bottom {
+				height:50%;
+			}
+			
 			
 			#fullGraph {
 				height:100%;
@@ -77,28 +77,28 @@
 			}
 			
 		</style>
-    </head>
-    <body>
-    	
-    	<div id="map">
-    	</div>
-    	
-    	<div id="bottom">
-	    	
-	    	<div id="fullGraph">
-		        <div id="topButtons" style="float:left; width:100px;">
-		        </div>
+	</head>
+	<body>
+		
+		<div id="map">
+		</div>
+		
+		<div id="bottom">
+			
+			<div id="fullGraph">
+				<div id="topButtons" style="float:left; width:100px;">
+				</div>
 		   
-		        <div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
-		        </div>
-		    
-		    	<div id="bottomPanel" style="position:relative; height:30px;">
-		    		<div id="options" style="float:left;">
-		    			<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
-		    		</div>
-		    		
-		        	<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
-		        	</div>
+				<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
+				</div>
+			
+				<div id="bottomPanel" style="position:relative; height:30px;">
+					<div id="options" style="float:left;">
+						<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
+					</div>
+					
+					<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
+					</div>
 				</div>
 			</div>
 			
@@ -109,15 +109,18 @@
 		
 		<script type="text/javascript">
 			var allFuncs = {};
-		
 			var mapFuncs = {};
-		
-        	var graphWidth = document.getElementById("graph").offsetWidth;
-        	var graphHeight = document.getElementById("graph").offsetHeight;
-        	        	
-			var margin = {top: 20, right: 20, bottom: 30, left: 60};
-			var width = graphWidth - margin.left - margin.right;
-			var height = graphHeight - margin.top - margin.bottom;
+			var graphFuncs = {};
+			var lineChartFuncs = {};
+
+			var totalGraphWidth = document.getElementById("graph").offsetWidth;
+			var totalGraphHeight = document.getElementById("graph").offsetHeight;
+
+			console.log(totalGraphWidth, totalGraphHeight);
+
+			var graphMargin = {top: 20, right: 20, bottom: 30, left: 60};			
+			var graphWidth = totalGraphWidth - graphMargin.left - graphMargin.right;
+			var graphHeight = totalGraphHeight - graphMargin.top - graphMargin.bottom;
 			
 			var tooltip = d3.select("body").append("div")
 				.attr("class", "tooltip")
@@ -125,14 +128,15 @@
 				.style("left", "0px")
 				.style("top", "0px");
 				
-			var graphFuncs = {};
 			
-			var lineChartWidth = document.getElementById("onePlot").offsetWidth;
-        	var lineChartHeight = document.getElementById("onePlot").offsetHeight;
-			var lineChartWidth = lineChartWidth - margin.left - margin.right;
-			var lineChartHeight = lineChartHeight - margin.top - margin.bottom;
+			var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
+			var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
 			
-			var lineChartFuncs = {};
+			console.log(totalLineChartWidth, totalLineChartHeight);
+
+			var lineChartMargin = {top: 20, right: 20, bottom: 30, left: 40};
+			var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
+			var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
 			
 			
 			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
@@ -158,117 +162,117 @@
 				//*******************************************************************************************
 				//****************************************MAP STUFF******************************************
 				//*******************************************************************************************
-	            var map = new google.maps.Map(d3.select("#map").node(), {
-	                zoom : 12,
-	                center : new google.maps.LatLng(40.73, -73.99),
-	                mapTypeId : google.maps.MapTypeId.TERRAIN,
-	                clickableLabels : false
-	            });
-	            d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
-	            	data.sort(function(a, b) {
-	                	return b["totalDocks"] - a["totalDocks"];
-	                });
-	            	
-		            var rScale = d3.scale.linear()
-		                .domain([
-		                    d3.min(data, function(d) {
-		                        return parseInt(d["totalDocks"]);
-		                    }),
-		                    d3.max(data, function(d) {
+				var map = new google.maps.Map(d3.select("#map").node(), {
+					zoom : 12,
+					center : new google.maps.LatLng(40.73, -73.99),
+					mapTypeId : google.maps.MapTypeId.TERRAIN,
+					clickableLabels : false
+				});
+				d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
+					data.sort(function(a, b) {
+						return b["totalDocks"] - a["totalDocks"];
+					});
+					
+					var rScale = d3.scale.linear()
+						.domain([
+							d3.min(data, function(d) {
 								return parseInt(d["totalDocks"]);
-		                    })])
-		                .range([2,15]);
-		            
-		            var overlay = new google.maps.OverlayView();
-		            
-		            overlay.onAdd = function() {
-		                //var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
-		                var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
-		                
-		                pane = layer.append("svg");
-		                
-		                overlay.draw = function() {
-		                    var projection = this.getProjection();
-		                    var padding = 16;
-		                    
-		                	minX = d3.min(data, function(d) {
-			                	d = new google.maps.LatLng(d["lat"], d["lon"]);
-			                    d = projection.fromLatLngToDivPixel(d);
-			                	return Math.round(d.x);
-			                })-100;
-			                maxX = d3.max(data, function(d) {
-			                	d = new google.maps.LatLng(d["lat"], d["lon"]);
-			                    d = projection.fromLatLngToDivPixel(d);
-			                	return Math.round(d.x);
-			                })+100;
-			                minY = d3.min(data, function(d) {
-			                	d = new google.maps.LatLng(d["lat"], d["lon"]);
-			                    d = projection.fromLatLngToDivPixel(d);
-			                	return Math.round(d.y);
-			                })-100;
-			                maxY = d3.max(data, function(d) {
-			                	d = new google.maps.LatLng(d["lat"], d["lon"]);
-			                    d = projection.fromLatLngToDivPixel(d);
-			                	return Math.round(d.y);
-			                })+100;
-			                
-			                // console.log(minX, maxX, minY, maxY);
-		                    
-		                    pane
-		                    	.style("top", minY)
-		                    	.style("left", minX)
-		                    	.style("width", maxX-minX)
-		                    	.style("height", maxY-minY)
-		                    	;
-		                    	
-	                    	// pane = pane.append("g");
+							}),
+							d3.max(data, function(d) {
+								return parseInt(d["totalDocks"]);
+							})])
+						.range([2,15]);
+					
+					var overlay = new google.maps.OverlayView();
+					
+					overlay.onAdd = function() {
+						//var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
+						var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
+						
+						pane = layer.append("svg");
+						
+						overlay.draw = function() {
+							var projection = this.getProjection();
+							var padding = 16;
+							
+							minX = d3.min(data, function(d) {
+								d = new google.maps.LatLng(d["lat"], d["lon"]);
+								d = projection.fromLatLngToDivPixel(d);
+								return Math.round(d.x);
+							})-100;
+							maxX = d3.max(data, function(d) {
+								d = new google.maps.LatLng(d["lat"], d["lon"]);
+								d = projection.fromLatLngToDivPixel(d);
+								return Math.round(d.x);
+							})+100;
+							minY = d3.min(data, function(d) {
+								d = new google.maps.LatLng(d["lat"], d["lon"]);
+								d = projection.fromLatLngToDivPixel(d);
+								return Math.round(d.y);
+							})-100;
+							maxY = d3.max(data, function(d) {
+								d = new google.maps.LatLng(d["lat"], d["lon"]);
+								d = projection.fromLatLngToDivPixel(d);
+								return Math.round(d.y);
+							})+100;
+							
+							// console.log(minX, maxX, minY, maxY);
+							
+							pane
+								.style("top", minY)
+								.style("left", minX)
+								.style("width", maxX-minX)
+								.style("height", maxY-minY)
+								;
+								
+							// pane = pane.append("g");
 		
-		                    // var marker = layer.selectAll("svg")
-		                        // .data(d3.entries(data))
+							// var marker = layer.selectAll("svg")
+								// .data(d3.entries(data))
 								// .each(transform)// update existing markers
-		                        // .enter()
-		                        // .append("svg:svg")
-		                        // .each(transform)
-		                        // .attr("class", "marker");
+								// .enter()
+								// .append("svg:svg")
+								// .each(transform)
+								// .attr("class", "marker");
 		
-		                    // Add a circle.
-		                    var marker = pane
-		                    	.selectAll("circle")
-	                    		.data(data)
-	                    		.each(transform)
-	                    		.enter()
-	                    		.append("circle")
-	                    		.attr("class", "mapCircle")
-	                    		.each(transform)
-		                    	.attr("id", function(d) {
-		                    			return "mapDot"+d.id;
-		                    		})
-		                        .attr("r", function(d) {
-		                            return rScale(parseInt(d["totalDocks"]));
-		                        })
-		                        .attr("fill", function(d) {
-			            			if (d.group == undefined) {
-			            				return "#000000";
-			            			} else {
-			            				return colors[d.group].s;
-			            			}
-		                        })
+							// Add a circle.
+							var marker = pane
+								.selectAll("circle")
+								.data(data)
+								.each(transform)
+								.enter()
+								.append("circle")
+								.attr("class", "mapCircle")
+								.each(transform)
+								.attr("id", function(d) {
+										return "mapDot"+d.id;
+									})
+								.attr("r", function(d) {
+									return rScale(parseInt(d["totalDocks"]));
+								})
+								.attr("fill", function(d) {
+									if (d.group == undefined) {
+										return "#000000";
+									} else {
+										return colors[d.group].s;
+									}
+								})
 								.attr("cursor", "pointer")
-		                        .on("mouseover", function(d) {
-		                        	allFuncs.hoverGroup(d.group, d.id);
+								.on("mouseover", function(d) {
+									allFuncs.hoverGroup(d.group, d.id);
 								})
 								.on("mouseout", function(d) {
 									allFuncs.unhoverGroup();
 								});
 		
-		                    function transform(d) {
-		                        d = new google.maps.LatLng(d.lat, d.lon);
-		                        d = projection.fromLatLngToDivPixel(d);
-		                        return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
-		                    }
-		                };
-		                
-		                mapFuncs.hoverGroup = function(group, id) {
+							function transform(d) {
+								d = new google.maps.LatLng(d.lat, d.lon);
+								d = projection.fromLatLngToDivPixel(d);
+								return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
+							}
+						};
+						
+						mapFuncs.hoverGroup = function(group, id) {
 							pane.selectAll(".mapCircle")
 								.data(data)
 								.transition()
@@ -289,111 +293,111 @@
 								.duration(100)
 								.attr("fill-opacity", 1);
 						};
-		            };
-		            
-		            overlay.setMap(map);
-	            });
+					};
+					
+					overlay.setMap(map);
+				});
 	
 				//*******************************************************************************************
 				//***************************************GRAPH STUFF*****************************************
 				//*******************************************************************************************
-	            var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
-	            
-	            for (i in labels) {
-	            	var label = labels[i];
-	            	
-	            	document.getElementById("topButtons").innerHTML += '<button id="x_'+label[0]+'+" name="totalDocksY" onclick="changeY(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
-	            	
-	            	document.getElementById("bottomButtons").innerHTML += '<button id="y_'+label[0]+'" name="totalDocksY" onclick="changeX(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
-	            }
+				var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
 				
-	            // d3.json("../../data/nyc/stations.json", function(data) {
-	        	d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
-	            	//console.log(data);
-	            	data.sort(function(a, b) {
-	                	return b["totalDocks"] - a["totalDocks"];
-	                });
-	            	
-	            	var xValue = function(d) {return d["totalDocks"];};
-		            var xScale = d3.scale.linear()
-		                .domain([
-		                    d3.min(data, function(d) {
-		                        return parseInt(d["totalDocks"]);
-	                        })-1,
-		                    d3.max(data, function(d) {
-		                        return parseInt(d["totalDocks"]);
-		                    })+1])
-		                .range([0, width]);
-		            var xMap = function(d) {return xScale(xValue(d));};
-	                var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-		            
-		            var yValue = function(d) {return d["request"];};
-	                var yScale = d3.scale.linear()
-		                .domain([
-		                    d3.min(data, function(d) {
-		                        return parseInt(d["request"]);
-		                    })-1,
-		                    d3.max(data, function(d) {
-		                        return parseInt(d["request"]);
-		                    })+1])
-		                .range([height, 0]);
-	                var yMap = function(d) {return yScale(yValue(d));};
-	                var yAxis = d3.svg.axis().scale(yScale).orient("left");
-		                
-	                var svg = d3.select("#graph").append("svg")
-	                	.attr("id", "graphsvg")
-						.attr("width", width + margin.left + margin.right)
-						.attr("height", height + margin.top + margin.bottom)
+				for (i in labels) {
+					var label = labels[i];
+					
+					document.getElementById("topButtons").innerHTML += '<button id="x_'+label[0]+'+" name="totalDocksY" onclick="changeY(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
+					
+					document.getElementById("bottomButtons").innerHTML += '<button id="y_'+label[0]+'" name="totalDocksY" onclick="changeX(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
+				}
+				
+				// d3.json("../../data/nyc/stations.json", function(data) {
+				d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
+					//console.log(data);
+					data.sort(function(a, b) {
+						return b["totalDocks"] - a["totalDocks"];
+					});
+					
+					var xValue = function(d) {return d["totalDocks"];};
+					var xScale = d3.scale.linear()
+						.domain([
+							d3.min(data, function(d) {
+								return parseInt(d["totalDocks"]);
+							})-1,
+							d3.max(data, function(d) {
+								return parseInt(d["totalDocks"]);
+							})+1])
+						.range([0, graphWidth]);
+					var xMap = function(d) {return xScale(xValue(d));};
+					var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+					
+					var yValue = function(d) {return d["request"];};
+					var yScale = d3.scale.linear()
+						.domain([
+							d3.min(data, function(d) {
+								return parseInt(d["request"]);
+							})-1,
+							d3.max(data, function(d) {
+								return parseInt(d["request"]);
+							})+1])
+						.range([graphHeight, 0]);
+					var yMap = function(d) {return yScale(yValue(d));};
+					var yAxis = d3.svg.axis().scale(yScale).orient("left");
+						
+					var svg = d3.select("#graph").append("svg")
+						.attr("id", "graphsvg")
+						.attr("width", totalGraphWidth)
+						.attr("height", totalGraphHeight)
 						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		                
-	                //x-axis
-	                svg.append("g")
-	                	.attr("id", "xaxis")
-	                	.attr("class", "x axis")
-	                	.attr("transform", "translate(0,"+height+")")
-	                	.call(xAxis)
-	                	.append("text")
-	                	.attr("id", "xlabel")
-	                	.attr("class", "label")
-	                	.attr("x", width)
-	                	.attr("y", -6)
-	                	.style("text-anchor", "end")
-	                	.text("Total Docks");
-	                	
-	                //y-axis
-	                svg.append("g")
-	                	.attr("id", "yaxis")
-	                	.attr("class", "y axis")
-	                	.call(yAxis)
-	                	.append("text")
-	                	.attr("id", "ylabel")
+						.attr("transform", "translate(" + graphMargin.left + "," + graphMargin.top + ")");
+						
+					//x-axis
+					svg.append("g")
+						.attr("id", "xaxis")
+						.attr("class", "x axis")
+						.attr("transform", "translate(0,"+graphHeight+")")
+						.call(xAxis)
+						.append("text")
+						.attr("id", "xlabel")
 						.attr("class", "label")
-	                	.attr("transform", "rotate(-90)")
-	                	.attr("y", 6)
-	                	.attr("dy", "0.71em")
-	                	.style("text-anchor", "end")
-	                	.text("Request Value");
-	                	
-	                	
-	            	svg.selectAll(".dot")
-	            		.data(data)
-	            		.enter().append("circle")
-	            		.attr("class", "dot")
-	            		.attr("id", function(d) {
-	            				return "graphDot"+d["id"];
-	            			})
-	            		.attr("r", 3.5)
-	            		.attr("cx", xMap)
-	            		.attr("cy", yMap)
-	            		.attr("fill", function(d) {
-	            			if (d.group == undefined) {
-	            				return "#000000";
-	            			} else {
-	            				return colors[d.group].s;
-	            			}
-	            		})
-	            		.attr("cursor", "pointer")
+						.attr("x", graphWidth)
+						.attr("y", -6)
+						.style("text-anchor", "end")
+						.text("Total Docks");
+						
+					//y-axis
+					svg.append("g")
+						.attr("id", "yaxis")
+						.attr("class", "y axis")
+						.call(yAxis)
+						.append("text")
+						.attr("id", "ylabel")
+						.attr("class", "label")
+						.attr("transform", "rotate(-90)")
+						.attr("y", 6)
+						.attr("dy", "0.71em")
+						.style("text-anchor", "end")
+						.text("Request Value");
+						
+						
+					svg.selectAll(".dot")
+						.data(data)
+						.enter().append("circle")
+						.attr("class", "dot")
+						.attr("id", function(d) {
+								return "graphDot"+d["id"];
+							})
+						.attr("r", 3.5)
+						.attr("cx", xMap)
+						.attr("cy", yMap)
+						.attr("fill", function(d) {
+							if (d.group == undefined) {
+								return "#000000";
+							} else {
+								return colors[d.group].s;
+							}
+						})
+						.attr("cursor", "pointer")
 						.on("mouseover", function(d) {
 							allFuncs.hoverGroup(d.group, d.id);
 							tooltip.transition()
@@ -471,17 +475,17 @@
 						xValue = function(d) {return d[label];};
 						
 						var min = d3.min(data, function(d) {
-	                		    return parseFloat(d[label]);
-	               		});
-	               		var max = d3.max(data, function(d) {
-	                		    return parseFloat(d[label]);
-	                   		});
-	                       
-	           			var epsilon = (max-min)/100.0;
+								return parseFloat(d[label]);
+						});
+						var max = d3.max(data, function(d) {
+								return parseFloat(d[label]);
+							});
+						   
+						var epsilon = (max-min)/100.0;
 						
 						
 						xScale.domain([min-epsilon, max+epsilon]);
-		                    
+							
 						svg.selectAll(".dot")
 							.data(data)
 							.transition()
@@ -489,28 +493,28 @@
 							.attr("cx", xMap);
 							
 						svg.select("#xaxis")
-		                	.call(xAxis);
-		                	
-	                	svg.select("#xlabel")
-	                		.text(labelName);
+							.call(xAxis);
+							
+						svg.select("#xlabel")
+							.text(labelName);
 					};
 					
 					graphFuncs.changeY = function(label, labelName) {
 						yValue = function(d) {return d[label];};
 						
 						var min = d3.min(data, function(d) {
-		                        return parseFloat(d[label]);
-	                   		});
+								return parseFloat(d[label]);
+							});
 						var max = d3.max(data, function(d) {
-		                        return parseFloat(d[label]);
-	                   		});
-	                       
-	               		var epsilon = (max-min)/100.0;
-	               		
-	               		// console.log(max, min, epsilon);
+								return parseFloat(d[label]);
+							});
+						   
+						var epsilon = (max-min)/100.0;
+						
+						// console.log(max, min, epsilon);
 						
 						yScale.domain([min-epsilon, max+epsilon]);
-		                    
+							
 						svg.selectAll(".dot")
 							.data(data)
 							.transition()
@@ -518,9 +522,9 @@
 							.attr("cy", yMap);
 							
 						svg.select("#yaxis")
-		                	.call(yAxis);
-		                	
-	                	svg.select("#ylabel")
+							.call(yAxis);
+							
+						svg.select("#ylabel")
 							.text(labelName);
 					};
 					
@@ -528,14 +532,14 @@
 						if (element.checked) {
 							svg.selectAll(".dot")
 								.data(data)
-			            		.style("fill", function(d) {
-			            			if (d.group == undefined) {
-			            				return "#000000";
-			            			} else {
-			            				return colors[d.group].s;
-			            			}
-			            				
-			            		});
+								.style("fill", function(d) {
+									if (d.group == undefined) {
+										return "#000000";
+									} else {
+										return colors[d.group].s;
+									}
+										
+								});
 						}
 						else {
 							svg.selectAll(".dot")
@@ -544,123 +548,125 @@
 					};
 					
 					graphFuncs.resizeWindow = function() {
-						graphWidth = document.getElementById("graph").offsetWidth;
-			        	graphHeight = document.getElementById("graph").offsetHeight;
-			        	
-			        	width = graphWidth - margin.left - margin.right;
-						height = graphHeight - margin.top - margin.bottom;
-			        	
-			        	// console.log(graphWidth, graphHeight);
-			        	
-			        	d3.select("#graphsvg")
-			        		.attr("class", "test")
-							.attr("width", width + margin.left + margin.right)
-							.attr("height", height + margin.top + margin.bottom);
-	                	
-						xScale.range([0, width]);
-						yScale.range([height, 0]);
+						
+						tooltip.style("left", "0px").style("top", "0px");
+
+						totalGraphWidth = document.getElementById("graph").offsetWidth;
+						totalGraphHeight = document.getElementById("graph").offsetHeight;
+						
+						graphWidth = totalGraphWidth - graphMargin.left - graphMargin.right;
+						graphHeight = totalGraphHeight - graphMargin.top - graphMargin.bottom;
+						
+						// console.log(graphWidth, graphHeight);
+						
+						d3.select("#graphsvg")
+							.attr("width", totalGraphWidth)
+							.attr("height", totalGraphHeight);
+						
+						xScale.range([0, graphWidth]);
+						yScale.range([graphHeight, 0]);
 						
 						svg.select("#xaxis")
 							.call(xAxis)
-							.attr("transform", "translate(0,"+height+")");
-	                	svg.select("#xlabel").attr("x", width);
-	                	
+							.attr("transform", "translate(0,"+graphHeight+")");
+						svg.select("#xlabel").attr("x", graphWidth);
+						
 						svg.select("#yaxis")
-		                	.call(yAxis);
-		                	
+							.call(yAxis);
+							
 						svg.selectAll(".dot")
 							.data(data)
 							.attr("cx", xMap)
 							.attr("cy", yMap);
 					};
-	            });
-	            
-	            //*******************************************************************************************
+				});
+				
+				//*******************************************************************************************
 				//***************************************LINECHART STUFF*************************************
 				//*******************************************************************************************
-	            d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
-	            	// console.log(data);
-	            	
-		            var xScale = d3.scale.linear()
-		                .domain([0,1500])
-		                .range([0, width]);
-		            var xMap = function(d) {return xScale(d);};
-	                var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-		            
-	                var yScale = d3.scale.linear()
-		                .domain([0,1])
-		                .range([height, 0]);
-	                var yMap = function(d) {return yScale(d);};
-	                var yAxis = d3.svg.axis().scale(yScale).orient("left");
-		                
-	                var svg = d3.select("#onePlot").append("svg")
-	                	.attr("id", "linechartsvg")
-						.attr("width", width + margin.left + margin.right)
-						.attr("height", height + margin.top + margin.bottom)
+				d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
+					// console.log(data);
+					
+					var xScale = d3.scale.linear()
+						.domain([0,1500])
+						.range([0, lineChartWidth]);
+					var xMap = function(d) {return xScale(d);};
+					var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+					
+					var yScale = d3.scale.linear()
+						.domain([0,1])
+						.range([lineChartHeight, 0]);
+					var yMap = function(d) {return yScale(d);};
+					var yAxis = d3.svg.axis().scale(yScale).orient("left");
+						
+					var svg = d3.select("#onePlot").append("svg")
+						.attr("id", "linechartsvg")
+						.attr("width", totalLineChartWidth)
+						.attr("height", totalLineChartHeight)
 						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		                
-	                //x-axis
-	                svg.append("g")
-	                	.attr("id", "xaxis")
-	                	.attr("class", "x axis")
-	                	.attr("transform", "translate(0,"+height+")")
-	                	.call(xAxis)
-	                	.append("text")
-	                	.attr("id", "xlabel")
-	                	.attr("class", "label")
-	                	.attr("x", width)
-	                	.attr("y", -6)
-	                	.style("text-anchor", "end")
-	                	.text("Minute");
-	                	
-	                //y-axis
-	                svg.append("g")
-	                	.attr("id", "yaxis")
-	                	.attr("class", "y axis")
-	                	.call(yAxis)
-	                	.append("text")
-	                	.attr("id", "ylabel")
+						.attr("transform", "translate(" + lineChartMargin.left + "," + lineChartMargin.top + ")");
+						
+					//x-axis
+					svg.append("g")
+						.attr("id", "xaxis")
+						.attr("class", "x axis")
+						.attr("transform", "translate(0,"+lineChartHeight+")")
+						.call(xAxis)
+						.append("text")
+						.attr("id", "xlabel")
+						.attr("class", "label")
+						.attr("x", lineChartWidth)
+						.attr("y", -6)
+						.style("text-anchor", "end")
+						.text("Minute");
+						
+					//y-axis
+					svg.append("g")
+						.attr("id", "yaxis")
+						.attr("class", "y axis")
+						.call(yAxis)
+						.append("text")
+						.attr("id", "ylabel")
 						.attr("class", "label")
 						.attr("transform", "rotate(-90)")
-	                	.attr("y", 6)
-	                	.attr("dy", "0.71em")
-	                	.style("text-anchor", "end")
-	                	.text("Percent Full");
-	                	
-	                var line = d3.svg.line()
-	                	.x(function(d,i) {
-	                		return xMap(i*5);
+						.attr("y", 6)
+						.attr("dy", "0.71em")
+						.style("text-anchor", "end")
+						.text("Percent Full");
+						
+					var line = d3.svg.line()
+						.x(function(d,i) {
+							return xMap(i*5);
 						})
-	                	.y(function(d) {
-	                		return yMap(d);
-	                	});
-	                	
-	                svg.selectAll(".lineplotpath")
-	                	.data(data)
-	                	.enter()
-	                	.append("path")
-	                	.attr("class", "lineplotpath")
-	                	.attr("d", function(d) {
-	                		return line(d.times);
-	                	})
-	                	.attr("stroke", function(d, i) {
-	                		return colors[i].s;
-	                	})
-	                	.attr("stroke-width", "3px")
-	                	.attr("cursor", "pointer")
-	                	.on("mouseover", function(d, i) {
-                        	allFuncs.hoverGroup(i, null);
+						.y(function(d) {
+							return yMap(d);
+						});
+						
+					svg.selectAll(".lineplotpath")
+						.data(data)
+						.enter()
+						.append("path")
+						.attr("class", "lineplotpath")
+						.attr("d", function(d) {
+							return line(d.times);
+						})
+						.attr("stroke", function(d, i) {
+							return colors[i].s;
+						})
+						.attr("stroke-width", "3px")
+						.attr("cursor", "pointer")
+						.on("mouseover", function(d, i) {
+							allFuncs.hoverGroup(i, null);
 						})
 						.on("mouseout", function(d) {
 							allFuncs.unhoverGroup();
 						});
-	                	
-                	lineChartFuncs.hoverGroup = function(group) {
-                		console.log("hover");
-                		svg.selectAll(".lineplotpath")
-                		.data(data)
-                		.transition()
+						
+					lineChartFuncs.hoverGroup = function(group) {
+						//console.log("hover");
+						svg.selectAll(".lineplotpath")
+						.data(data)
+						.transition()
 						.duration(100)
 						.attr("stroke-width", function(d, i) {
 							if (i == group)
@@ -668,87 +674,88 @@
 							else
 								return "3px";
 						})
-                		.attr("stroke-opacity", function(d, i) {
-                			if (i == group)
-                				return 1;
-            				else
-            					return 0.3;
-                		});
-                	};
-                	
-                	lineChartFuncs.unhoverGroup = function() {
-                		svg.selectAll(".lineplotpath")
-                		.data(data)
-                		.transition()
+						.attr("stroke-opacity", function(d, i) {
+							if (i == group)
+								return 1;
+							else
+								return 0.3;
+						});
+					};
+					
+					lineChartFuncs.unhoverGroup = function() {
+						svg.selectAll(".lineplotpath")
+						.data(data)
+						.transition()
 						.duration(100)
 						.attr("stroke-width", "3px")
-                		.attr("stroke-opacity", 1);
-                	};
-	                	
-	                lineChartFuncs.resizeWindow = function() {
-						var lineChartWidth = document.getElementById("onePlot").offsetWidth;
-			        	var lineChartHeight = document.getElementById("onePlot").offsetHeight;
-						var lineChartWidth = lineChartWidth - margin.left - margin.right;
-						var lineChartHeight = lineChartHeight - margin.top - margin.bottom;
-			        	
-			        	// console.log(graphWidth, graphHeight);
-			        	
-			        	d3.select("#linechartsvg")
-			        		.attr("class", "test")
-							.attr("width", lineChartWidth + margin.left + margin.right)
-							.attr("height", lineChartHeight + margin.top + margin.bottom);
-	                	
-						xScale.range([0, width]);
-						yScale.range([height, 0]);
+						.attr("stroke-opacity", 1);
+					};
+						
+					lineChartFuncs.resizeWindow = function() {
+						console.log("RESIZE");
+
+						var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
+						var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
+						var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
+						var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
+						
+						// console.log(graphWidth, graphHeight);
+						
+						d3.select("#linechartsvg")
+							.attr("width", totalLineChartWidth)
+							.attr("height", totalLineChartHeight);
+						
+						xScale.range([0, lineChartWidth]);
+						yScale.range([lineChartHeight, 0]);
 						
 						svg.select("#xaxis")
 							.call(xAxis)
-							.attr("transform", "translate(0,"+height+")");
-	                	svg.select("#xlabel").attr("x", width);
+							.attr("transform", "translate(0,"+lineChartHeight+")");
+						svg.select("#xlabel").attr("x", lineChartWidth);
 						
 						svg.select("#yaxis")
-		                	.call(yAxis);
-		                	
-	                	svg.selectAll(".lineplotpath")
-	                	.data(data)
-	                	.attr("d", function(d) {
-	                		return line(d.times);
-	                	});
+							.call(yAxis);
+							
+						svg.selectAll(".lineplotpath")
+						.data(data)
+						.attr("d", function(d) {
+							return line(d.times);
+						});
 					};
-	                	
-        		});
-        		
-        		allFuncs.hoverGroup = function(group, id) {
-        			mapFuncs.hoverGroup(group, id);
-	        		graphFuncs.hoverGroup(group, id);
-            		lineChartFuncs.hoverGroup(group);
-        		};
-        		
-        		allFuncs.unhoverGroup = function() {
-        			mapFuncs.unhoverGroup();
-	        		graphFuncs.unhoverGroup();
+						
+				});
+				
+				allFuncs.hoverGroup = function(group, id) {
+					mapFuncs.hoverGroup(group, id);
+					graphFuncs.hoverGroup(group, id);
+					lineChartFuncs.hoverGroup(group);
+				};
+				
+				allFuncs.unhoverGroup = function() {
+					mapFuncs.unhoverGroup();
+					graphFuncs.unhoverGroup();
 					lineChartFuncs.unhoverGroup();
-        		};
-	        });
-            
-            function changeX(label, labelName) {
-            	graphFuncs.changeX(label, labelName);
-            }
-            
-            function changeY(label, labelName) {
-            	graphFuncs.changeY(label, labelName);
-            }
-            
-            function toggleColorGroups(element) {
-            	graphFuncs.toggleColorGroups(element);
-            }
-            
-            window.onresize = function() {
-            	graphFuncs.resizeWindow();
-            	lineChartFuncs.resizeWindow();
-            };
-            
-        </script>
+				};
+			});
+			
+			function changeX(label, labelName) {
+				graphFuncs.changeX(label, labelName);
+			}
+			
+			function changeY(label, labelName) {
+				graphFuncs.changeY(label, labelName);
+			}
+			
+			function toggleColorGroups(element) {
+				graphFuncs.toggleColorGroups(element);
+			}
+			
+			window.onresize = function() {
+				graphFuncs.resizeWindow();
+				lineChartFuncs.resizeWindow();
+			};
+			
+		</script>
 		
-    </body>
+	</body>
 </html>

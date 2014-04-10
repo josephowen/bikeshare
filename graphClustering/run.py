@@ -1,9 +1,9 @@
 import os
 
 def runSet(city, distance, days, distanceType):
-    os.system("Cluster.py ../data/"+city+"/"+days+"Averages.json ../data/"+city+"/dtwClustering/"+days+" dendrogramGroups "+distance+" "+distanceType + " ../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json")
-    os.system("combine.py ../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json ../data/"+city+"/stations.json ../data/"+city+"/dtwClustering/"+days+"StationsGrouped"+distance+".json ../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json")
-    os.system("graphAllGroups.py ../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json ../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+".png ../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json")
+    os.system(" ".join(["Cluster.py", "../data/"+city+"/"+days+"Averages.json", "../data/"+city+"/dtwClustering/"+days+" dendrogramGroups", distance, distanceType, "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
+    os.system(" ".join(["combine.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/stations.json", "../data/"+city+"/dtwClustering/"+days+"StationsGrouped"+distance+".json", "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
+    os.system(" ".join(["graphAllGroups.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+".png", "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
     
 #runSet("nyc", "20", "weekday", "dtw")
 
