@@ -15,6 +15,15 @@
 				font: 16px sans-serif;
 				background-color:#AAAAAA;
 			}
+
+			#wholepage {
+				/*
+				width:99%;
+				height:99%;
+				*/
+				width:100%;
+				height:100%;
+			}
 			
 			#map {
 				height:50%;
@@ -79,32 +88,34 @@
 		</style>
 	</head>
 	<body>
-		
-		<div id="map">
-		</div>
-		
-		<div id="bottom">
-			
-			<div id="fullGraph">
-				<div id="topButtons" style="float:left; width:100px;">
-				</div>
-		   
-				<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
-				</div>
-			
-				<div id="bottomPanel" style="position:relative; height:30px;">
-					<div id="options" style="float:left;">
-						<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
-					</div>
-					
-					<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
-					</div>
-				</div>
+		<div id="wholepage">
+			<div id="map">
 			</div>
 			
-			<div id="onePlot">
+			<div id="bottom">
+				
+				<div id="fullGraph">
+					<div id="topButtons" style="float:left; width:100px;">
+					</div>
+			   
+					<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
+					</div>
+				
+					<div id="bottomPanel" style="position:relative; height:30px;">
+						<div id="options" style="float:left;">
+							<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
+						</div>
+						
+						<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
+						</div>
+					</div>
+				</div>
+				
+				<div id="onePlot">
+				</div>
+				
 			</div>
-			
+
 		</div>
 		
 		<script type="text/javascript">
@@ -553,6 +564,8 @@
 
 						totalGraphWidth = document.getElementById("graph").offsetWidth;
 						totalGraphHeight = document.getElementById("graph").offsetHeight;
+
+						console.log(totalGraphWidth, totalGraphHeight);
 						
 						graphWidth = totalGraphWidth - graphMargin.left - graphMargin.right;
 						graphHeight = totalGraphHeight - graphMargin.top - graphMargin.bottom;
@@ -561,7 +574,8 @@
 						
 						d3.select("#graphsvg")
 							.attr("width", totalGraphWidth)
-							.attr("height", totalGraphHeight);
+							.attr("height", totalGraphHeight)
+							.attr("transform", "translate(" + graphMargin.left + "," + graphMargin.top + ")");
 						
 						xScale.range([0, graphWidth]);
 						yScale.range([graphHeight, 0]);
@@ -692,18 +706,17 @@
 					};
 						
 					lineChartFuncs.resizeWindow = function() {
-						console.log("RESIZE");
-
 						var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
 						var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
 						var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
 						var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
-						
-						// console.log(graphWidth, graphHeight);
+
+						console.log(totalLineChartWidth, totalLineChartHeight);
 						
 						d3.select("#linechartsvg")
 							.attr("width", totalLineChartWidth)
-							.attr("height", totalLineChartHeight);
+							.attr("height", totalLineChartHeight)
+							.attr("transform", "translate(" + lineChartMargin.left + "," + lineChartMargin.top + ")");
 						
 						xScale.range([0, lineChartWidth]);
 						yScale.range([lineChartHeight, 0]);
@@ -750,9 +763,14 @@
 				graphFuncs.toggleColorGroups(element);
 			}
 			
-			window.onresize = function() {
+			function resizeAll() {
+				console.log("RESIZE");
 				graphFuncs.resizeWindow();
 				lineChartFuncs.resizeWindow();
+			}
+
+			window.onresize = function() {
+				resizeAll();
 			};
 			
 		</script>
