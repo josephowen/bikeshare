@@ -16,15 +16,6 @@
 				background-color:#AAAAAA;
 			}
 
-			#wholepage {
-				/*
-				width:99%;
-				height:99%;
-				*/
-				width:100%;
-				height:100%;
-			}
-			
 			#map {
 				height:50%;
 			}
@@ -88,34 +79,31 @@
 		</style>
 	</head>
 	<body>
-		<div id="wholepage">
-			<div id="map">
+		<div id="map">
+		</div>
+		
+		<div id="bottom">
+			
+			<div id="fullGraph">
+				<div id="topButtons" style="float:left; width:100px;">
+				</div>
+		   
+				<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
+				</div>
+			
+				<div id="bottomPanel" style="position:relative; height:30px;">
+					<div id="options" style="float:left;">
+						<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
+					</div>
+					
+					<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
+					</div>
+				</div>
 			</div>
 			
-			<div id="bottom">
-				
-				<div id="fullGraph">
-					<div id="topButtons" style="float:left; width:100px;">
-					</div>
-			   
-					<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
-					</div>
-				
-					<div id="bottomPanel" style="position:relative; height:30px;">
-						<div id="options" style="float:left;">
-							<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
-						</div>
-						
-						<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
-						</div>
-					</div>
-				</div>
-				
-				<div id="onePlot">
-				</div>
-				
+			<div id="onePlot">
 			</div>
-
+			
 		</div>
 		
 		<script type="text/javascript">
@@ -124,8 +112,8 @@
 			var graphFuncs = {};
 			var lineChartFuncs = {};
 
-			var totalGraphWidth = document.getElementById("graph").offsetWidth;
-			var totalGraphHeight = document.getElementById("graph").offsetHeight;
+			var totalGraphWidth = document.getElementById("graph").offsetWidth-5;
+			var totalGraphHeight = document.getElementById("graph").offsetHeight-5;
 
 			console.log(totalGraphWidth, totalGraphHeight);
 
@@ -140,8 +128,8 @@
 				.style("top", "0px");
 				
 			
-			var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
-			var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
+			var totalLineChartWidth = document.getElementById("onePlot").offsetWidth-5;
+			var totalLineChartHeight = document.getElementById("onePlot").offsetHeight-5;
 			
 			console.log(totalLineChartWidth, totalLineChartHeight);
 
@@ -200,7 +188,7 @@
 						//var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
 						var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
 						
-						pane = layer.append("svg");
+						pane = layer.append("svg").attr("id", "mapPane");
 						
 						overlay.draw = function() {
 							var projection = this.getProjection();
@@ -227,13 +215,13 @@
 								return Math.round(d.y);
 							})+100;
 							
-							// console.log(minX, maxX, minY, maxY);
+							console.log(minX, maxX, minY, maxY);
 							
 							pane
-								.style("top", minY)
-								.style("left", minX)
-								.style("width", maxX-minX)
-								.style("height", maxY-minY)
+								.style("top", minY+"px")
+								.style("left", minX+"px")
+								.style("width", maxX-minX+"px")
+								.style("height", maxY-minY+"px")
 								;
 								
 							// pane = pane.append("g");
@@ -357,9 +345,8 @@
 						
 					var svg = d3.select("#graph").append("svg")
 						.attr("id", "graphsvg")
-						.attr("width", totalGraphWidth)
-						.attr("height", totalGraphHeight)
-						.append("g")
+						.style("width", totalGraphWidth+"px")
+						.style("height", totalGraphHeight+"px")
 						.attr("transform", "translate(" + graphMargin.left + "," + graphMargin.top + ")");
 						
 					//x-axis
@@ -562,8 +549,8 @@
 						
 						tooltip.style("left", "0px").style("top", "0px");
 
-						totalGraphWidth = document.getElementById("graph").offsetWidth;
-						totalGraphHeight = document.getElementById("graph").offsetHeight;
+						totalGraphWidth = document.getElementById("graph").offsetWidth-5;
+						totalGraphHeight = document.getElementById("graph").offsetHeight-5;
 
 						console.log(totalGraphWidth, totalGraphHeight);
 						
@@ -573,8 +560,8 @@
 						// console.log(graphWidth, graphHeight);
 						
 						d3.select("#graphsvg")
-							.attr("width", totalGraphWidth)
-							.attr("height", totalGraphHeight)
+							.style("width", totalGraphWidth+"px")
+							.style("height", totalGraphHeight+"px")
 							.attr("transform", "translate(" + graphMargin.left + "," + graphMargin.top + ")");
 						
 						xScale.range([0, graphWidth]);
@@ -615,9 +602,8 @@
 						
 					var svg = d3.select("#onePlot").append("svg")
 						.attr("id", "linechartsvg")
-						.attr("width", totalLineChartWidth)
-						.attr("height", totalLineChartHeight)
-						.append("g")
+						.style("width", totalLineChartWidth+"px")
+						.style("height", totalLineChartHeight+"px")
 						.attr("transform", "translate(" + lineChartMargin.left + "," + lineChartMargin.top + ")");
 						
 					//x-axis
@@ -706,16 +692,16 @@
 					};
 						
 					lineChartFuncs.resizeWindow = function() {
-						var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
-						var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
+						var totalLineChartWidth = document.getElementById("onePlot").offsetWidth-5;
+						var totalLineChartHeight = document.getElementById("onePlot").offsetHeight-5;
 						var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
 						var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
 
 						console.log(totalLineChartWidth, totalLineChartHeight);
 						
 						d3.select("#linechartsvg")
-							.attr("width", totalLineChartWidth)
-							.attr("height", totalLineChartHeight)
+							.style("width", totalLineChartWidth+"px")
+							.style("height", totalLineChartHeight+"px")
 							.attr("transform", "translate(" + lineChartMargin.left + "," + lineChartMargin.top + ")");
 						
 						xScale.range([0, lineChartWidth]);
