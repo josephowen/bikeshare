@@ -1,0 +1,19 @@
+station growth
+	-on individual level
+	-grid
+	-zip
+	-voronoi
+
+DTW
+	-Percent full
+	-Event
+	-Activity
+
+Should we perform analyses on grid/station/zip level
+
+
+Goals:
+Prentation at bike hack event
+Report for talk
+Public website
+GitHub code

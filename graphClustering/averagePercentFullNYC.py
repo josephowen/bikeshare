@@ -71,7 +71,7 @@ while 1:
         # print line
     
     line = line.split(",")
-    for i in xrange(5):
+    for i in xrange(len(line)):
         line[i] = line[i].replace("\"", "")
         
     
