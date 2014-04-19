@@ -69,7 +69,7 @@
 				height:100%;
 				width:50%;
 				float:left;
-				/*background-color:#FFFFFF;*/
+				background-color:#FFFFFF;
 			}
 			
 			.lineplotpath {
@@ -89,15 +89,16 @@
 				<div id="topButtons" style="float:left; width:100px;">
 				</div>
 		   
-				<div id="graph" style="margin-left:100px; height:calc(100% - 60px);">
+				<div id="graph" style="margin-left:100px; height:calc(100% - 30px);">
 				</div>
 			
-				<div id="bottomPanel" style="height:60px;">
-					<div id="options" style="height:100%; float:left; margin-right:20px;">
+				<div id="bottomPanel" style="position:relative; height:30px;">
+					<div id="options" style="float:left;">
 						<label><input type="checkbox" name="colorGroups" onchange="toggleColorGroups(this)" checked />Color Groups</label>
 					</div>
 					
-					<div id="bottomButtons"></div>
+					<div id="bottomButtons" style="position:absolute; right:0; bottom:0;">
+					</div>
 				</div>
 			</div>
 			
@@ -115,7 +116,7 @@
 			var totalGraphWidth = document.getElementById("graph").offsetWidth;
 			var totalGraphHeight = document.getElementById("graph").offsetHeight;
 
-			// console.log(totalGraphWidth, totalGraphHeight);
+			console.log(totalGraphWidth, totalGraphHeight);
 
 			var graphMargin = {top: 20, right: 20, bottom: 30, left: 60};			
 			var graphWidth = totalGraphWidth - graphMargin.left - graphMargin.right;
@@ -131,16 +132,11 @@
 			var totalLineChartWidth = document.getElementById("onePlot").offsetWidth;
 			var totalLineChartHeight = document.getElementById("onePlot").offsetHeight;
 			
-			// console.log(totalLineChartWidth, totalLineChartHeight);
+			console.log(totalLineChartWidth, totalLineChartHeight);
 
 			var lineChartMargin = {top: 20, right: 20, bottom: 30, left: 40};
 			var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
 			var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
-
-			var groupName = "weekday50group"
-			var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"], ["changeCount", "Change Boolean"], ["changeTotal", "Change Magnitude"], ["changePercent", "Change Percentage"]];
-
-			//var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
 			
 			
 			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
@@ -172,7 +168,7 @@
 					mapTypeId : google.maps.MapTypeId.TERRAIN,
 					clickableLabels : false
 				});
-				d3.json("../../data/nyc/stations.json", function(data) {
+				d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
 					data.sort(function(a, b) {
 						return b["totalDocks"] - a["totalDocks"];
 					});
@@ -220,7 +216,7 @@
 								return Math.round(d.y);
 							})+100;
 							
-							// console.log(minX, maxX, minY, maxY);
+							console.log(minX, maxX, minY, maxY);
 							
 							pane
 								.style("top", minY+"px")
@@ -255,15 +251,15 @@
 									return rScale(parseInt(d["totalDocks"]));
 								})
 								.attr("fill", function(d) {
-									if (d[groupName] == undefined) {
+									if (d.group == undefined) {
 										return "#000000";
 									} else {
-										return colors[d[groupName]].s;
+										return colors[d.group].s;
 									}
 								})
 								.attr("cursor", "pointer")
 								.on("mouseover", function(d) {
-									allFuncs.hoverGroup(d[groupName], d.id);
+									allFuncs.hoverGroup(d.group, d.id);
 								})
 								.on("mouseout", function(d) {
 									allFuncs.unhoverGroup();
@@ -281,14 +277,8 @@
 								.data(data)
 								.transition()
 								.duration(100)
-								.style("stroke-width", function(d) {
-									if (d.id == id)
-										return 5.0;
-									else
-										return 1.0;
-								})
 								.attr("fill-opacity", function(d) {
-									if (d[groupName] == group) {
+									if (d.group == group) {
 										return 1;
 									} else {
 										return 0.2;
@@ -301,7 +291,6 @@
 								.data(data)
 								.transition()
 								.duration(100)
-								.style("stroke-width", 1.0)
 								.attr("fill-opacity", 1);
 						};
 					};
@@ -312,6 +301,8 @@
 				//*******************************************************************************************
 				//***************************************GRAPH STUFF*****************************************
 				//*******************************************************************************************
+				var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
+				
 				for (i in labels) {
 					var label = labels[i];
 					
@@ -321,7 +312,7 @@
 				}
 				
 				// d3.json("../../data/nyc/stations.json", function(data) {
-				d3.json("../../data/nyc/stations.json", function(data) {
+				d3.json("../../data/nyc/dtwClustering/weekdayStationsGrouped50.json", function(data) {
 					//console.log(data);
 					data.sort(function(a, b) {
 						return b["totalDocks"] - a["totalDocks"];
@@ -411,15 +402,15 @@
 						.attr("cx", xMap)
 						.attr("cy", yMap)
 						.attr("fill", function(d) {
-							if (d[groupName] == undefined) {
+							if (d.group == undefined) {
 								return "#000000";
 							} else {
-								return colors[d[groupName]].s;
+								return colors[d.group].s;
 							}
 						})
 						.attr("cursor", "pointer")
 						.on("mouseover", function(d) {
-							allFuncs.hoverGroup(d[groupName], d.id);
+							allFuncs.hoverGroup(d.group, d.id);
 							tooltip.transition()
 								.duration(200)
 								.style("opacity", 1.0);
@@ -443,11 +434,11 @@
 
 					// function resort(group) {
 					// 	data.sort(function(a, b) {
-					// 		if (a[groupName] == group && b[groupName] == group)
+					// 		if (a.group == group && b.group == group)
 					// 			return 0;
-					// 		if (a[groupName] == group)
+					// 		if (a.group == group)
 					// 			return -1;
-					// 		else if (b[groupName] == group)
+					// 		else if (b.group == group)
 					// 			return 1;
 					// 		else
 					// 			return 0;
@@ -462,10 +453,10 @@
 					// 	.attr("cx", xMap)
 					// 	.attr("cy", yMap)
 					// 	.attr("fill", function(d) {
-					// 		if (d[groupName] == undefined) {
+					// 		if (d.group == undefined) {
 					// 			return "#000000";
 					// 		} else {
-					// 			return colors[d[groupName]].s;
+					// 			return colors[d.group].s;
 					// 		}
 					// 	});
 					// }
@@ -479,13 +470,13 @@
 								.transition()
 								.duration(100)
 								.attr("fill-opacity", function(d) {
-									if (d[groupName] == group)
+									if (d.group == group)
 										return 1;
 									else
 										return 0.3;
 								})
 								.attr("stroke", function(d) {
-									if (d[groupName] == group)
+									if (d.group == group)
 										return "black";
 									else
 										return "none";
@@ -503,13 +494,13 @@
 								.transition()
 								.duration(100)
 								.attr("fill-opacity", function(d) {
-									if (d[groupName] == group)
+									if (d.group == group)
 										return 1;
 									else
 										return 0.3;
 								})
 								.attr("stroke", function(d) {
-									if (d[groupName] == group)
+									if (d.group == group)
 										return "black";
 									else
 										return "none";
@@ -590,10 +581,10 @@
 							svg.selectAll(".dot")
 								.data(data)
 								.style("fill", function(d) {
-									if (d[groupName] == undefined) {
+									if (d.group == undefined) {
 										return "#000000";
 									} else {
-										return colors[d[groupName]].s;
+										return colors[d.group].s;
 									}
 										
 								});
@@ -611,7 +602,7 @@
 						totalGraphWidth = document.getElementById("graph").offsetWidth;
 						totalGraphHeight = document.getElementById("graph").offsetHeight;
 
-						// console.log(totalGraphWidth, totalGraphHeight);
+						console.log(totalGraphWidth, totalGraphHeight);
 						
 						graphWidth = totalGraphWidth - graphMargin.left - graphMargin.right;
 						graphHeight = totalGraphHeight - graphMargin.top - graphMargin.bottom;
@@ -760,7 +751,7 @@
 						var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
 						var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
 
-						// console.log(totalLineChartWidth, totalLineChartHeight);
+						console.log(totalLineChartWidth, totalLineChartHeight);
 						
 						d3.select("#linechartsvg")
 							.attr("width", "100%") //totalLineChartWidth+"px")
@@ -815,6 +806,7 @@
 			}
 			
 			function resizeAll() {
+				console.log("RESIZE");
 				graphFuncs.resizeWindow();
 				lineChartFuncs.resizeWindow();
 			}

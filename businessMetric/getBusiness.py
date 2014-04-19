@@ -1,7 +1,6 @@
 from datetime import datetime, date, time, timedelta
 import json
 import sys
-import os
 
 logFileName = "../data/nyc/raw/ind_newyork.csv"
 
