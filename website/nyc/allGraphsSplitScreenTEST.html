@@ -13,7 +13,8 @@
 				margin: 0;
 				padding: 0;
 				font: 16px sans-serif;
-				background-color:#AAAAAA;
+				/*background-color:#AAAAAA;*/
+				background-color:#FFFFFF;
 				overflow:hidden;
 			}
 
@@ -40,6 +41,7 @@
 			
 			#bottom {
 				height:50%;
+				border-top:1px solid;
 			}
 			
 			
@@ -47,6 +49,7 @@
 				height:100%;
 				width:50%;
 				float:left;
+				/*border-right:1px solid;*/
 			}
 			
 			.axis path, .axis line {
@@ -67,9 +70,13 @@
 			
 			#onePlot {
 				height:100%;
-				width:50%;
 				float:left;
-				/*background-color:#FFFFFF;*/
+
+				/*Border beween graphs*/
+				width: -moz-calc(50% - 1px);
+                width: -webkit-calc(50% - 1px);
+                width: calc(50% - 1px);
+				border-left:1px solid;
 			}
 			
 			.lineplotpath {
