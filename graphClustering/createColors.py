@@ -7,8 +7,8 @@ if len(sys.argv) == 3:
     numColors = int(sys.argv[1])
     colorFile = sys.argv[2]
 else:
-    numColors = 7
-    colorFile = "../data/nyc/dtwClustering/weekdays/colors100.json"
+    print "Missing parameters"
+    exit(0)
 
 colors = []
 

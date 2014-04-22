@@ -87,8 +87,6 @@ while 1:
         stationLast[station] = availableBikes
         totalChange[station] += change
         if change > 0:
-            if change < 1:
-                print "WHAT"
             numChanges[station] += 1
         percentChange[station] += change/float(totalDocks)
         sampleCount[station] += 1
@@ -104,7 +102,7 @@ output = {}
 for station in sampleCount.keys():
     count = float(sampleCount[station])
     print station, count
-    output[station] = {"changeCount":numChanges[station]/count, "changeTotal":totalChange[station]/count, "changePercent":percentChange[station]/count}
+    output[station] = {"changeCount":numChanges[station]/count, "changeTotal":totalChange[station]/count, "changePercent":100*percentChange[station]/count}
 
 with open("output.json", 'w') as f:
     json.dump(output, f)

@@ -6,6 +6,7 @@ from time import sleep
 import matplotlib.pyplot as plt
 from random import random
 import mlpy
+#from math import sqrt
 
 def yDistance(times1, times2):
     totalDist = 0
@@ -14,17 +15,25 @@ def yDistance(times1, times2):
     # print totalDist
     return totalDist
     
+    
+#def dist(x1, y1, x2, y2):
+#    return sqrt((x1-x2)**2 + (y1-y2)**2)
+    
 def dtwDistance(times1, times2):
-    n = len(times1)
-    m = len(times2)        
+    #Check all m and n uses, off-by-one areas abound
+    n = len(times1)+1
+    m = len(times2)+1      
     w = 12
 
     dtw = [[sys.maxint]*(m) for x in xrange(n)]
     dtw[0][0] = 0
     
-    for i in xrange(len(times1)):
-        for j in xrange(max(1,i-w), min()):
-            pass
+    for i in xrange(1, n):
+        for j in xrange(max(1,i-w), min(m, i+w)):
+            cost = abs(times1[(i-1)] + times2[(j-1)])
+            dtw[i][j] = cost + min(dtw[i-1][j], dtw[i][j-1], dtw[i-1][j-1])
+            
+    return dtw[n-1][m-1]
     
     
 def dtwDistanceMLPY(times1, times2):
@@ -232,13 +241,8 @@ if __name__ == "__main__":
         distType = sys.argv[5]
         colorFile = sys.argv[6]
     else:
-        inputFile = "../data/nyc/weekdayAverages.json"
-        outputFolder = "../data/nyc/dtwClustering/weekdays"
-        fileName = "dendrogramGroups"
-        dist = 100
-        distType = "ydiff"
-        colorFile = "../data/nyc/dtwClustering/weekdays/colors100.json"
-        print "Using preset arguments"
+        print "Missing parameters"
+        exit(0)
     
 #    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", "dendrogramGroups", 100)
     run(inputFile, outputFolder, fileName, dist)

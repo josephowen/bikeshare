@@ -7,10 +7,8 @@ if len(sys.argv) == 4:
     groupName = sys.argv[3]
     #colorFile = sys.argv[4]
 else:
-    inputFile = "../data/nyc/dtwClustering/weekdays/dendrogramGroups100.json"
-    stationsFile = "../data/nyc/stations.json"
-    groupName = "weekday100group"
-    #colorFile = "../data/nyc/dtwClustering/weekdays/colors100.json"
+    print "Missing parameters"
+    exit(0)
 
 with open(inputFile, "r") as f:
     groups = json.load(f)

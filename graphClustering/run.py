@@ -1,7 +1,13 @@
 import os
 
 def runSet(city, distance, days, distanceType):
-    os.system(" ".join(["Cluster.py", "../data/"+city+"/"+days+"Averages.json", "../data/"+city+"/dtwClustering/"+days+" dendrogramGroups", distance, distanceType, "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
+    os.system(" ".join(["Cluster.py",
+                        "../data/"+city+"/"+days+"Averages.json",
+                        "../data/"+city+"/dtwClustering/"+days+" dendrogramGroups",
+                        distance,
+                        distanceType,
+                        "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"
+                        ]))
     os.system(" ".join(["combine.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/stations.json", days+distance+"group"]))
     os.system(" ".join(["graphAllGroups.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+".png", "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
     
