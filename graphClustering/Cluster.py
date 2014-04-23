@@ -19,11 +19,22 @@ def yDistance(times1, times2):
 #def dist(x1, y1, x2, y2):
 #    return sqrt((x1-x2)**2 + (y1-y2)**2)
     
+def printDTW(dtw):
+    for row in dtw:
+        for elem in row:
+            if elem == sys.maxint:
+                sys.stdout.write("X\t")
+            else:
+                sys.stdout.write(str(elem)+"\t")
+        sys.stdout.write("\n")
+    
 def dtwDistance(times1, times2):
+    print times1
+    print times2
     #Check all m and n uses, off-by-one areas abound
     n = len(times1)+1
-    m = len(times2)+1      
-    w = 12
+    m = len(times2)+1
+    w = 3
 
     dtw = [[sys.maxint]*(m) for x in xrange(n)]
     dtw[0][0] = 0
@@ -31,8 +42,10 @@ def dtwDistance(times1, times2):
     for i in xrange(1, n):
         for j in xrange(max(1,i-w), min(m, i+w)):
             cost = abs(times1[(i-1)] + times2[(j-1)])
+#            print cost
             dtw[i][j] = cost + min(dtw[i-1][j], dtw[i][j-1], dtw[i-1][j-1])
             
+    printDTW(dtw)
     return dtw[n-1][m-1]
     
     
@@ -233,6 +246,12 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
     os.system("createColors.py "+str(len(groups))+" "+colorFile)
 
 if __name__ == "__main__":
+#    x = [0,0,0,0,1,1,2,2,3,2,1,1,0,0,0,0]
+#    y = [0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0]
+    x = [0,0,0,0,1,2,3]
+    y = [0,1,1,2,2,3,3]
+    print dtwDistance(x, y)
+    
     if len(sys.argv) == 7:
         inputFile = sys.argv[1]
         outputFolder = sys.argv[2]
