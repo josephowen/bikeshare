@@ -34,7 +34,7 @@ def dtwDistance(times1, times2):
     #Check all m and n uses, off-by-one areas abound
     n = len(times1)+1
     m = len(times2)+1
-    w = 3
+    w = 6 #30 minutes on either side = 1 hour
 
     dtw = [[sys.maxint]*(m) for x in xrange(n)]
     dtw[0][0] = 0
