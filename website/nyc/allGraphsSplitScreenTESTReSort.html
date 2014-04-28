@@ -5,6 +5,7 @@
 		<title>A Bunch of Graphs</title>
 		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<style type="text/css">
 			
 			html, body {
@@ -284,8 +285,7 @@
 								})
 								.on("click", function(d) {
 									console.log("reordering");
-									var sel = d3.select(this);
-									sel.moveToFront();
+									mapFuncs.reorder(this, d.id);
 									// pane.selectAll("circle").sort(function (a, b) { // select the parent and sort the path's
 									// 	if (a != d) return -1;               // a is not the hovered element, send "a" to the back
 									// 	else return 1;                             // a is the hovered element, bring "a" to the front
@@ -301,6 +301,29 @@
 								return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
 							};
 
+						};
+
+						mapFuncs.reorder = function(elem, id) {
+							console.log("BEFORE");
+							console.log($('.mapCircle').length)
+							console.log(data.length);
+							// var dataclone = data.slice(0);
+							// console.log(dataclone);
+							// console.log(data);
+							var result = $.grep(data, function(e){ return e.id == id; });
+							var index = data.indexOf(result[0]);
+
+							data.splice(index, 1);
+							data.push(result);
+
+							console.log()
+
+							var sel = d3.select(elem);
+							sel.moveToFront();
+
+							console.log("AFTER");
+							console.log($('.mapCircle').length)
+							console.log(data.length);
 						};
 						
 						mapFuncs.hoverGroup = function(group, id) {
