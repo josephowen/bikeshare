@@ -697,7 +697,8 @@
 				//***************************************LINECHART STUFF*************************************
 				//*******************************************************************************************
 				d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
-					// console.log(data);
+					console.log(data);
+
 					
 					var xScale = d3.scale.linear()
 						.domain([0,1500])
@@ -764,6 +765,7 @@
 							return line(d.times);
 						})
 						.attr("stroke", function(d, i) {
+							console.log(i);
 							return colors[i].s;
 						})
 						.attr("stroke-width", "3px")

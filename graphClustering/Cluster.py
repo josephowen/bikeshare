@@ -239,6 +239,22 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
     groupsList = []
     for value in groups.itervalues():
         groupsList.append(value)
+        
+    print "After:", len(groupsList), "groups"
+        
+    print "Removing empty groups"
+    for i in xrange(len(groupsList)-1, -1, -1):
+        print i
+        empty = True
+        for time in groupsList[i]["times"]:
+            if time != 0:
+                empty = False
+                break
+        if empty:
+            del(groupsList[i])
+            
+    print "Now:", len(groupsList), "groups"
+                    
 
     fileName = destinationFolder + fileName +str(maxDistance)+".json"
 
@@ -246,10 +262,9 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
 
     with open(fileName, "w") as f:
         json.dump(groupsList, f)
-        
-    print "After:", len(groups), "groups"
+            
     
-    os.system("createColors.py "+str(len(groups))+" "+colorFile)
+    os.system("createColors.py "+str(len(groupsList))+" "+colorFile)
 
 if __name__ == "__main__":
 #    x = [0,0,0,0,1,1,2,2,3,2,1,1,0,0,0,0]
