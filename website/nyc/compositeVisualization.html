@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-		<title>A Bunch of Graphs</title>
+		<title>NYC Composite Visualization</title>
 		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<style type="text/css">
@@ -299,7 +299,7 @@
 									if (d[groupName] == group) {
 										return 1;
 									} else {
-										return 0.2;
+										return 0.1;
 									}
 								});
 						};
@@ -490,7 +490,7 @@
 									if (d[groupName] == group)
 										return 1;
 									else
-										return 0.3;
+										return 0.2;
 								})
 								.attr("stroke", function(d) {
 									if (d[groupName] == group)

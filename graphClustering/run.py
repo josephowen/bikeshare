@@ -11,7 +11,9 @@ def runSet(city, distance, days, distanceType):
     os.system(" ".join(["combine.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/stations.json", days+distance+distanceType+"group"]))
     os.system(" ".join(["graphAllGroups.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+distanceType+".png", "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
     
-runSet("nyc", "50", "weekday", "dtw")
+#runSet("nyc", "50", "weekday", "dtw")
+
+runSet("dc", "50", "weekday", "dtw")
 
 #runSet("nyc", "50", "weekday", "ydiff")
 #runSet("nyc", "50", "weekend", "ydiff")

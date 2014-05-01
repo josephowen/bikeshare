@@ -1,3 +1,4 @@
 .metadata*
 *.pyc
 /data/nyc/raw/ind_newyork.csv
+/data/dc/raw/bike_ind_washingtondc.csv
