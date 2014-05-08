@@ -6,6 +6,17 @@
 		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>
+			Array.prototype.move = function(from, to) {
+				this.splice(to, 0, this.splice(from, 1)[0]);
+			}
+
+			Array.prototype.toEnd = function(element) {
+				from = this.indexOf(element);
+				to = this.length-1;
+				this.move(from, to);
+			}
+		</script>
 		<style type="text/css">
 			
 			html, body {
@@ -295,10 +306,6 @@
 								.on("click", function(d) {
 									console.log("reordering");
 									mapFuncs.reorder(this, d.id);
-									// pane.selectAll("circle").sort(function (a, b) { // select the parent and sort the path's
-									// 	if (a != d) return -1;               // a is not the hovered element, send "a" to the back
-									// 	else return 1;                             // a is the hovered element, bring "a" to the front
-									// });
 								});
 								// .on("click", function(d) {
 									// mapFuncs.resort(d[groupName], d.id)
@@ -312,31 +319,44 @@
 						};
 
 						mapFuncs.reorder = function(elem, id) {
-							console.log("BEFORE");
-							console.log($('.mapCircle').length)
-							console.log(data.length);
-							// var dataclone = data.slice(0);
-							// console.log(dataclone);
-							// console.log(data);
+							// console.log("BEFORE");
+							// console.log($('.mapCircle').length)
+							// console.log("Last id: " + data[data.length-1].id);
+
 							var result = $.grep(data, function(e){ return e.id == id; });
-							var index = data.indexOf(result[0]);
 
-							data.splice(index, 1);
-							data.push(result);
+							data.toEnd(result[0]);
 
-							console.log()
-
-							// var sel = d3.select(elem);
-							// sel.moveToFront();
-
-							console.log("AFTER");
-							console.log($('.mapCircle').length)
-							console.log(data.length);
+							// console.log("AFTER");
+							// console.log($('.mapCircle').length)
+							// console.log("Last id: " + data[data.length-1].id);
 
 							pane.selectAll(".mapCircle")
 							.data(data)
 							.each(transform)
-							.enter();
+							.attr("id", function(d) {
+									return "mapDot"+d.id;
+								})
+							.attr("r", function(d) {
+								return rScale(parseInt(d["totalDocks"]));
+							})
+							.attr("fill", function(d) {
+								if (d[groupName] == undefined) {
+									return "#000000";
+								} else {
+									return colors[d[groupName]].s;
+								}
+							})
+							.on("mouseover", function(d) {
+								allFuncs.hoverGroup(d[groupName], d.id);
+							})
+							.on("mouseout", function(d) {
+								allFuncs.unhoverGroup();
+							})
+							.on("click", function(d) {
+								console.log("reordering");
+								mapFuncs.reorder(this, d.id);
+							});
 
 						};
 						
