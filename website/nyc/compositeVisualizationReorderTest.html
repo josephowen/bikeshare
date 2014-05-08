@@ -208,11 +208,20 @@
 						//var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
 						var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
 						
-						pane = layer.append("svg").attr("id", "mapPane");
+						var pane = layer.append("svg").attr("id", "mapPane");
+
+						var projection = this.getProjection();
+
+						var padding = 16;
+
+						var transform = function(d) {
+							d = new google.maps.LatLng(d.lat, d.lon);
+							d = projection.fromLatLngToDivPixel(d);
+							return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
+						};
 						
 						overlay.draw = function() {
-							var projection = this.getProjection();
-							var padding = 16;
+							projection = this.getProjection();
 							
 							minX = d3.min(data, function(d) {
 								d = new google.maps.LatLng(d["lat"], d["lon"]);
@@ -295,12 +304,11 @@
 									// mapFuncs.resort(d[groupName], d.id)
 								// });
 
-							function transform(d) {
+							transform = function(d) {
 								d = new google.maps.LatLng(d.lat, d.lon);
 								d = projection.fromLatLngToDivPixel(d);
 								return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
 							};
-
 						};
 
 						mapFuncs.reorder = function(elem, id) {
@@ -318,12 +326,18 @@
 
 							console.log()
 
-							var sel = d3.select(elem);
-							sel.moveToFront();
+							// var sel = d3.select(elem);
+							// sel.moveToFront();
 
 							console.log("AFTER");
 							console.log($('.mapCircle').length)
 							console.log(data.length);
+
+							pane.selectAll(".mapCircle")
+							.data(data)
+							.each(transform)
+							.enter();
+
 						};
 						
 						mapFuncs.hoverGroup = function(group, id) {
