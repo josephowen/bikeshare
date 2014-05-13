@@ -302,10 +302,13 @@
 								})
 								.on("mouseout", function(d) {
 									allFuncs.unhoverGroup();
+								})
+								.on("click", function(d) {
+									console.log("reordering");
+									mapFuncs.reorder(this, d.id);
 								});
 								// .on("click", function(d) {
-									// console.log("reordering");
-									// mapFuncs.reorder(this, d.id);
+									// mapFuncs.resort(d[groupName], d.id)
 								// });
 
 							transform = function(d) {
@@ -315,12 +318,18 @@
 							};
 						};
 
-						mapFuncs.reorder = function(group) {
-							var results = $.grep(data, function(e){ return e[groupName] == group; });
+						mapFuncs.reorder = function(elem, id) {
+							// console.log("BEFORE");
+							// console.log($('.mapCircle').length)
+							// console.log("Last id: " + data[data.length-1].id);
 
-							for (i=0; i<results.length; i++) {
-								data.toEnd(results[i]);
-							}
+							var result = $.grep(data, function(e){ return e.id == id; });
+
+							data.toEnd(result[0]);
+
+							// console.log("AFTER");
+							// console.log($('.mapCircle').length)
+							// console.log("Last id: " + data[data.length-1].id);
 
 							pane.selectAll(".mapCircle")
 							.data(data)
@@ -352,8 +361,6 @@
 						};
 						
 						mapFuncs.hoverGroup = function(group, id) {
-							mapFuncs.reorder(group)
-
 							pane.selectAll(".mapCircle")
 								.data(data)
 								.transition()
@@ -389,7 +396,7 @@
 				//*******************************************************************************************
 				//***************************************GRAPH STUFF*****************************************
 				//*******************************************************************************************
-				for (i=0; i<labels.length; i++) {
+				for (i in labels) {
 					var label = labels[i];
 					
 					document.getElementById("topButtons").innerHTML += '<button id="x_'+label[0]+'+" name="totalDocksY" onclick="changeY(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
@@ -546,50 +553,9 @@
 					// 		}
 					// 	});
 					// }
-
-					graphFuncs.reorder = function(group) {
-						var results = $.grep(data, function(e){ return e[groupName] == group; });
-
-						for (i=0; i<results.length; i++) {
-							data.toEnd(results[i]);
-						}
-
-						svg.selectAll(".dot")
-						.data(data)
-						.attr("id", function(d) {
-							return "graphDot"+d["id"];
-						})
-						.attr("r", 3.5)
-						.attr("cx", xMap)
-						.attr("cy", yMap)
-						.attr("fill", function(d) {
-							if (d[groupName] == undefined) {
-								return "#000000";
-							} else {
-								return colors[d[groupName]].s;
-							}
-						})
-						.on("mouseover", function(d) {
-							allFuncs.hoverGroup(d[groupName], d.id);
-							tooltip.transition()
-								.duration(200)
-								.style("opacity", 1.0);
-							tooltip.html("Station "+d["id"] + "<br/> (" + xValue(d) 
-							+ ", " + yValue(d) + ")")
-								.style("left", (d3.event.pageX + 5) + "px")
-								.style("top", (d3.event.pageY - 40) + "px");
-						})
-						.on("mouseout", function(d) {
-							allFuncs.unhoverGroup();
-							tooltip.transition()
-								.duration(500)
-								.style("opacity", 0);
-						});
-
-					};
 						
 					graphFuncs.hoverGroup = function(group, id) {
-						graphFuncs.reorder(group);
+						// resort(group);
 
 						if (id != null) {
 							svg.selectAll(".dot")
