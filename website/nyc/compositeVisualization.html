@@ -5,6 +5,18 @@
 		<title>NYC Composite Visualization</title>
 		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>
+			Array.prototype.move = function(from, to) {
+				this.splice(to, 0, this.splice(from, 1)[0]);
+			}
+
+			Array.prototype.toEnd = function(element) {
+				from = this.indexOf(element);
+				to = this.length-1;
+				this.move(from, to);
+			}
+		</script>
 		<style type="text/css">
 			
 			html, body {
@@ -114,6 +126,12 @@
 		</div>
 		
 		<script type="text/javascript">
+			d3.selection.prototype.moveToFront = function() {
+				return this.each(function(){
+					this.parentNode.appendChild(this);
+				});
+			};
+
 			var allFuncs = {};
 			var mapFuncs = {};
 			var graphFuncs = {};
@@ -150,6 +168,7 @@
 
 			//var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
 			
+			var shouldRevert = false;
 			
 			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
 				// var getColor = function(d) {
@@ -194,18 +213,27 @@
 								return parseInt(d["totalDocks"]);
 							})])
 						.range([2,15]);
-					
+
 					var overlay = new google.maps.OverlayView();
 					
 					overlay.onAdd = function() {
 						//var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "stations");
 						var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "stations");
 						
-						pane = layer.append("svg").attr("id", "mapPane");
+						var pane = layer.append("svg").attr("id", "mapPane");
+
+						var projection = this.getProjection();
+
+						var padding = 16;
+
+						var transform = function(d) {
+							d = new google.maps.LatLng(d.lat, d.lon);
+							d = projection.fromLatLngToDivPixel(d);
+							return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
+						};
 						
 						overlay.draw = function() {
-							var projection = this.getProjection();
-							var padding = 16;
+							projection = this.getProjection();
 							
 							minX = d3.min(data, function(d) {
 								d = new google.maps.LatLng(d["lat"], d["lon"]);
@@ -276,15 +304,68 @@
 								.on("mouseout", function(d) {
 									allFuncs.unhoverGroup();
 								});
-		
-							function transform(d) {
+
+							transform = function(d) {
 								d = new google.maps.LatLng(d.lat, d.lon);
 								d = projection.fromLatLngToDivPixel(d);
 								return d3.select(this).attr("cx", Math.round(d.x)-minX).attr("cy", Math.round(d.y)-minY);
-							}
+							};
 						};
+
+						mapFuncs.reloadData = function() {
+							pane.selectAll(".mapCircle")
+							.data(data)
+							.each(transform)
+							.attr("id", function(d) {
+									return "mapDot"+d.id;
+								})
+							.attr("r", function(d) {
+								return rScale(parseInt(d["totalDocks"]));
+							})
+							.attr("fill", function(d) {
+								if (d[groupName] == undefined) {
+									return "#000000";
+								} else {
+									return colors[d[groupName]].s;
+								}
+							})
+							.on("mouseover", function(d) {
+								allFuncs.hoverGroup(d[groupName], d.id);
+							})
+							.on("mouseout", function(d) {
+								allFuncs.unhoverGroup();
+							});
+						}
+
+						mapFuncs.reorder = function(group, id) {
+							// console.log("Reordering");
+
+							var results = $.grep(data, function(e){ return e[groupName] == group; });
+
+							for (i=0; i<results.length; i++) {
+								data.toEnd(results[i]);
+							}
+
+							if (id != null) {
+								var result = $.grep(data, function(e){ return e.id == id; });
+								data.toEnd(result[0]);
+							}
+
+							mapFuncs.reloadData();
+						};
+
+						mapFuncs.revertOrder = function() {
+							// console.log("Reverting");
+							data.sort(function(a, b) {
+								return b["totalDocks"] - a["totalDocks"];
+							});
+
+							mapFuncs.reloadData();
+						}
 						
 						mapFuncs.hoverGroup = function(group, id) {
+							mapFuncs.reorder(group, id)
+
 							pane.selectAll(".mapCircle")
 								.data(data)
 								.transition()
@@ -299,12 +380,17 @@
 									if (d[groupName] == group) {
 										return 1;
 									} else {
-										return 0.1;
+										return 0.2;
 									}
 								});
 						};
 						
 						mapFuncs.unhoverGroup = function() {
+							if (!shouldRevert)
+								return;
+
+							setTimeout(mapFuncs.revertOrder, 100);
+
 							pane.selectAll(".mapCircle")
 								.data(data)
 								.transition()
@@ -320,7 +406,7 @@
 				//*******************************************************************************************
 				//***************************************GRAPH STUFF*****************************************
 				//*******************************************************************************************
-				for (i in labels) {
+				for (i=0; i<labels.length; i++) {
 					var label = labels[i];
 					
 					document.getElementById("topButtons").innerHTML += '<button id="x_'+label[0]+'+" name="totalDocksY" onclick="changeY(\''+label[0]+'\', \''+label[1]+'\')">'+label[1]+'</button>';
@@ -477,9 +563,66 @@
 					// 		}
 					// 	});
 					// }
+
+					graphFuncs.reloadData = function() {
+						svg.selectAll(".dot")
+						.data(data)
+						.attr("id", function(d) {
+							return "graphDot"+d["id"];
+						})
+						.attr("r", 3.5)
+						.attr("cx", xMap)
+						.attr("cy", yMap)
+						.attr("fill", function(d) {
+							if (d[groupName] == undefined) {
+								return "#000000";
+							} else {
+								return colors[d[groupName]].s;
+							}
+						})
+						.on("mouseover", function(d) {
+							allFuncs.hoverGroup(d[groupName], d.id);
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", 1.0);
+							tooltip.html("Station "+d["id"] + "<br/> (" + xValue(d) 
+							+ ", " + yValue(d) + ")")
+								.style("left", (d3.event.pageX + 5) + "px")
+								.style("top", (d3.event.pageY - 40) + "px");
+						})
+						.on("mouseout", function(d) {
+							allFuncs.unhoverGroup();
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+					}
+
+					graphFuncs.reorder = function(group, id) {
+						var results = $.grep(data, function(e){ return e[groupName] == group; });
+
+						for (i=0; i<results.length; i++) {
+							data.toEnd(results[i]);
+						}
+
+						if (id != null) {
+							var result = $.grep(data, function(e){ return e.id == id; });
+							data.toEnd(result[0]);
+						}
+
+						graphFuncs.reloadData();
+					};
+
+					graphFuncs.revertOrder = function() {
+						data.sort(function(a, b) {
+							return b["totalDocks"] - a["totalDocks"];
+						});
+
+						graphFuncs.reloadData();
+					}
 						
 					graphFuncs.hoverGroup = function(group, id) {
-						// resort(group);
+						graphFuncs.reorder(group, id);
 
 						if (id != null) {
 							svg.selectAll(".dot")
@@ -490,7 +633,7 @@
 									if (d[groupName] == group)
 										return 1;
 									else
-										return 0.2;
+										return 0.3;
 								})
 								.attr("stroke", function(d) {
 									if (d[groupName] == group)
@@ -527,6 +670,11 @@
 					};
 					
 					graphFuncs.unhoverGroup = function() {
+						if (!shouldRevert)
+								return;
+
+						setTimeout(graphFuncs.revertOrder, 100);
+
 						svg.selectAll(".dot")
 							.data(data)
 							.transition()
@@ -656,6 +804,7 @@
 				//*******************************************************************************************
 				d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
 					// console.log(data);
+
 					
 					var xScale = d3.scale.linear()
 						.domain([0,1500])
@@ -722,6 +871,7 @@
 							return line(d.times);
 						})
 						.attr("stroke", function(d, i) {
+							// console.log(i);
 							return colors[i].s;
 						})
 						.attr("stroke-width", "3px")
@@ -754,6 +904,9 @@
 					};
 					
 					lineChartFuncs.unhoverGroup = function() {
+						if (!shouldRevert)
+							return;
+
 						svg.selectAll(".lineplotpath")
 						.data(data)
 						.transition()
@@ -798,15 +951,17 @@
 				});
 				
 				allFuncs.hoverGroup = function(group, id) {
+					shouldRevert = false;
 					mapFuncs.hoverGroup(group, id);
 					graphFuncs.hoverGroup(group, id);
 					lineChartFuncs.hoverGroup(group);
 				};
 				
 				allFuncs.unhoverGroup = function() {
-					mapFuncs.unhoverGroup();
-					graphFuncs.unhoverGroup();
-					lineChartFuncs.unhoverGroup();
+					shouldRevert = true;
+					setTimeout(mapFuncs.unhoverGroup, 200);
+					setTimeout(graphFuncs.unhoverGroup, 200);
+					setTimeout(lineChartFuncs.unhoverGroup, 200);
 				};
 			});
 			
