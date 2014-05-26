@@ -210,13 +210,7 @@ def cluster(groups, maxDist):
                     
             
 
-def run(sourceFile, destinationFolder, fileName, maxDistance):
-    if not destinationFolder[-1] == "/":
-        destinationFolder += "/"
-
-    if not os.path.exists(destinationFolder):
-        os.mkdir(destinationFolder)
-    
+def run(sourceFile, destinationFile, maxDistance):
     with open(sourceFile, "r") as f:
         data = json.load(f)
 
@@ -254,13 +248,13 @@ def run(sourceFile, destinationFolder, fileName, maxDistance):
             del(groupsList[i])
             
     print "Now:", len(groupsList), "groups"
-                    
+    
+    print "Writing to", destinationFile
+    
+    if not os.path.exists(os.path.dirname(destinationFile)):
+        os.makedirs(os.path.dirname(destinationFile))
 
-    fileName = destinationFolder + fileName +str(maxDistance)+".json"
-
-    print "Writing to", fileName
-
-    with open(fileName, "w") as f:
+    with open(destinationFile, "w") as f:
         json.dump(groupsList, f)
             
     
@@ -275,17 +269,17 @@ if __name__ == "__main__":
 #    y = [0,0,1,2,3,2,1,0]
 #    print dtwDistance(x, y)
     
-    if len(sys.argv) == 7:
+    if len(sys.argv) == 6:
         inputFile = sys.argv[1]
-        outputFolder = sys.argv[2]
-        fileName = sys.argv[3]
-        dist = int(sys.argv[4])
-        distType = sys.argv[5]
-        colorFile = sys.argv[6]
+        outputFile = sys.argv[2]
+#        fileName = sys.argv[3]
+        dist = int(sys.argv[3])
+        distType = sys.argv[4]
+        colorFile = sys.argv[5]
     else:
         print "Missing parameters"
         exit(0)
     
 #    run("../data/nyc/weekdayAverages.json", "../data/nyc/dtwClustering/weekdays", "dendrogramGroups", 100)
-    run(inputFile, outputFolder, fileName, dist)
+    run(inputFile, outputFile, dist)
 

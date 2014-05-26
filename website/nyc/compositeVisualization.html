@@ -86,8 +86,8 @@
 
 				/*Border beween graphs*/
 				width: -moz-calc(50% - 1px);
-                width: -webkit-calc(50% - 1px);
-                width: calc(50% - 1px);
+				width: -webkit-calc(50% - 1px);
+				width: calc(50% - 1px);
 				border-left:1px solid;
 			}
 			
@@ -162,15 +162,16 @@
 			var lineChartWidth = totalLineChartWidth - lineChartMargin.left - lineChartMargin.right;
 			var lineChartHeight = totalLineChartHeight - lineChartMargin.top - lineChartMargin.bottom;
 
-			//var groupName = "weekday50group"
-			var groupName = "weekday50dtwgroup"
+			var groupType = "weekday50dtw"
+
+			var groupName = groupType+"group"
 			var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"], ["changeCount", "Change Boolean"], ["changeTotal", "Change Magnitude"], ["changePercent", "Change Percentage"]];
 
 			//var labels = [["totalDocks", "Total Docks"], ["request", "Request Value"], ["elev", "Elevation"], ["lat", "Latitude"], ["lon", "Longitude"]];
 			
 			var shouldRevert = false;
 			
-			d3.json("../../data/nyc/dtwClustering/weekday/colors50.json", function(colors) {
+			d3.json("../../data/nyc/dtwClustering/colors/"+groupType+".json", function(colors) {
 				// var getColor = function(d) {
 					// // console.log(d.color);
 					// if (d.color != undefined)
@@ -188,7 +189,7 @@
 					colors[i].s = d3.rgb(Math.floor(colors[i].r*255), Math.floor(colors[i].g*255), Math.floor(colors[i].b*255)).toString();
 				}
 				
-				//console.log(colors);
+				// console.log(colors);
 				
 				//*******************************************************************************************
 				//****************************************MAP STUFF******************************************
@@ -744,19 +745,19 @@
 					graphFuncs.toggleColorGroups = function(element) {
 						if (element.checked) {
 							svg.selectAll(".dot")
-								.data(data)
-								.style("fill", function(d) {
-									if (d[groupName] == undefined) {
-										return "#000000";
-									} else {
-										return colors[d[groupName]].s;
-									}
-										
-								});
+							.data(data)
+							.attr("fill", function(d) {
+								if (d[groupName] == undefined) {
+									return "#000000";
+								} else {
+									return colors[d[groupName]].s;
+								}
+									
+							});
 						}
 						else {
 							svg.selectAll(".dot")
-								.style("fill", "#000000");
+							.attr("fill", "#000000");
 						}
 					};
 					
@@ -802,7 +803,7 @@
 				//*******************************************************************************************
 				//***************************************LINECHART STUFF*************************************
 				//*******************************************************************************************
-				d3.json("../../data/nyc/dtwClustering/weekday/dendrogramGroups50.json", function(data) {
+				d3.json("../../data/nyc/dtwClustering/groups/"+groupType+".json", function(data) {
 					// console.log(data);
 
 					
@@ -872,6 +873,7 @@
 						})
 						.attr("stroke", function(d, i) {
 							// console.log(i);
+							// console.log(colors[i]);
 							return colors[i].s;
 						})
 						.attr("stroke-width", "3px")

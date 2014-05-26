@@ -3,38 +3,17 @@ import os
 def runSet(city, distance, days, distanceType):
     os.system(" ".join(["Cluster.py",
                         "../data/"+city+"/"+days+"Averages.json",
-                        "../data/"+city+"/dtwClustering/groups/"+days+distance+distanceType+".json",
+                        "../data/"+city+"/dtwClustering/"+days+" dendrogramGroups",
                         distance,
                         distanceType,
-                        "../data/"+city+"/dtwClustering/colors/"+days+distance+distanceType+".json"
+                        "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"
                         ]))
-    os.system(" ".join(["combine.py", "../data/"+city+"/dtwClustering/groups/"+days+distance+distanceType+".json", "../data/"+city+"/stations.json", days+distance+distanceType+"group"]))
-    os.system(" ".join(["graphAllGroups.py", "../data/"+city+"/dtwClustering/groups/"+days+distance+distanceType+".json", "../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+distanceType+".png", "../data/"+city+"/dtwClustering/colors/"+days+distance+distanceType+".json"]))
-    
+    os.system(" ".join(["combine.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/stations.json", days+distance+distanceType+"group"]))
+    os.system(" ".join(["graphAllGroups.py", "../data/"+city+"/dtwClustering/"+days+"/dendrogramGroups"+distance+".json", "../data/"+city+"/dtwClustering/"+days+"GraphsGrouped"+distance+distanceType+".png", "../data/"+city+"/dtwClustering/"+days+"/colors"+distance+".json"]))
     
 #runSet("nyc", "50", "weekday", "dtw")
-#runSet("nyc", "50", "weekday", "ydiff")
-#runSet("nyc", "50", "weekend", "dtw")
-#runSet("nyc", "50", "weekend", "ydiff")
 
-#runSet("dc", "50", "weekday", "dtw")
-#runSet("dc", "50", "weekday", "ydiff")
-#runSet("dc", "50", "weekend", "dtw")
-#runSet("dc", "50", "weekend", "ydiff")
-
-
-#runSet("nyc", "100", "weekday", "dtw")
-#runSet("nyc", "100", "weekday", "ydiff")
-#runSet("nyc", "100", "weekend", "dtw")
-#runSet("nyc", "100", "weekend", "ydiff")
-
-runSet("dc", "100", "weekday", "dtw")
-runSet("dc", "100", "weekday", "ydiff")
-runSet("dc", "100", "weekend", "dtw")
-runSet("dc", "100", "weekend", "ydiff")
-
-
-#runSet("dc", "50", "weekday", "dtw")
+runSet("dc", "50", "weekday", "dtw")
 
 #runSet("nyc", "50", "weekday", "ydiff")
 #runSet("nyc", "50", "weekend", "ydiff")

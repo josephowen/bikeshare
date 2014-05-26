@@ -2,6 +2,7 @@ import colorsys as cs
 from random import random
 import json
 import sys
+import os
 
 if len(sys.argv) == 3:
     numColors = int(sys.argv[1])
@@ -25,5 +26,8 @@ for i in range(numColors):
     colors.append(thisColorJson)
 
     
+if not os.path.exists(os.path.dirname(colorFile)):
+    os.makedirs(os.path.dirname(colorFile))
+        
 with open(colorFile, "w") as f:
     json.dump(colors, f)
